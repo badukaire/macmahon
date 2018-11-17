@@ -25,10 +25,9 @@ linia22
 # rounds have a list of previously declared teams and results can be
 # provided in several formats, like:
 # team1 1 - 0 team2
+# team1 1 - team2 0
 # team1 vs team2 : 1 - 0
 # team1 - team2 : 1 - 0
-# team1 1 - team2 0
-# team1 1, team2 0
 
 :round
 
