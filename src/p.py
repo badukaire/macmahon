@@ -1,10 +1,9 @@
-#: processes accounting transactions from text file, and prints the balance
+#: processes a set of teams, settings and rounds and displays the standings according
+#: to the settings
 #:
 #: usage: python p.py [<options>] <file>
 #: options:
-#: -i : initial balance file
-#: -d : date min/max/month/year
-#:   examples: 2016, 2016-04, 2016-04:2016-05, 2016-04-02:2016-04-08
+#:   -f <file> : by now just reading a file
 #:
 #: can be called from any folder, and can use wrapper script p.sh
 #:
@@ -13,15 +12,77 @@ from __future__ import print_function
 
 import sys
 import getopt
-from datetime import datetime, timedelta
-
-# TODO : only define in 1 place valid account types (use dict in balance)
-# TODO : process more than 1 movs file
-# TODO : make mov date optional
-# TODO : be less strict with lenghts
 
 
-class Acct :
+class Teams :
+  
+  DEFAULT_VALUES = (0, 0, 0, 0, 0) # points, SOS, SOSOS, goals+, goals-
+
+  def __init__( self ) :
+
+    self.mSet = set()
+
+
+  def initialize( self ) :
+
+    self.mDict = dict()
+    for lsTeam in self.mSet :
+      self.mDict[ lsTeam ] = Teams.DEFAULT_VALUES
+    self.mSet = None
+
+
+  def add( self, sTeam ) :
+    """ adds to set of teams, returns 0 if not added """
+
+    liLen1 = len( self.mSet )
+    self.mSet.add( sTeam )
+    return len( self.mSet ) - liLen1
+
+
+  def size( self ) :
+    return len( self.mSet )
+
+
+  def getScore( self, sTeam ) :
+
+    try :
+      lRet = self.mDict[ sTeam ]
+    except :
+      lRet = None
+    return lRet
+
+
+  def setScore( self, sTeam, pScore ) :
+
+    try :
+      self.mDict[ sTeam ] = pScore
+      lRet = pScore
+    except :
+      print( "team %s NOT found, cant be updated" % sTeam )
+      lRet = None
+    return lRet
+
+
+class Settings :
+  pass
+
+class Round :
+  pass
+
+
+class Macmahon :
+
+  LINE_MIN_LEN = 4
+
+  TAG_TEAMS = "teams"
+  TAG_SETTINGS = "settings"
+  TAG_ROUND = "round"
+
+  STATE_NONE = 0
+  STATE_TEAMS = 1
+  STATE_SETTINGS = 2
+  STATE_ROUND = 3
+
 
   @staticmethod
   def usage() :
@@ -40,28 +101,15 @@ class Acct :
         break
     lF.close()
 
-  W_ACCT = 12
-  W_AMOUNT = 12
-  W_DATE = 10
-  W_LINE = 2 * W_ACCT + W_AMOUNT + W_DATE
-  W_BAL_LINE = 24
-
-  # valid account name types prefixes
-  gssTypes = ( 'S_', 'D_', 'C_', 'P_', 'F_', 'X_' )
-
-  gsFmtYear = "%Y"
-  gsFmtMonth = "%Y-%m"
-  gsFmtDate = "%Y-%m-%d"
-  gsFmtDateUI = "yyyy-mm-dd"
-
 
   def __init__( self ) :
 
-    self.miMov = 0
-    self.miMovAcct = 0
-    self.mDictSaldo = {}
-    self.mDateIni = None
-    self.mDateFin = None
+    self.miState = Macmahon.STATE_NONE
+    self.miRound = 0
+
+    self.mTeams = Teams()
+    print( "size of self.mTeams=%d" % self.mTeams.size() )
+
 
 
   @staticmethod
@@ -69,231 +117,201 @@ class Acct :
     print( sErrorMsg, file=sys.stderr )
 
 
-  @staticmethod
-  def valAcct( sVal ) :
-    liRet = 0 # OK, default
-    liLen = len( sVal )
-    if liLen > Acct.W_ACCT :
-      liRet = 1
-      Acct.eprint( 'account name %s too long (%d), max is %d' % ( sVal, liLen, Acct.W_ACCT ) )
-    elif sVal[ : 2 ] not in Acct.gssTypes :
-      liRet = 1
-      Acct.eprint( 'account name %s not valid, must start by %s' % ( sVal, Acct.gssTypes ) )
-    return liRet
+
+  def state( self, iState ) :
+    """Set state
+    Return True if changed successfully
+    """
+    
+    liState = self.miState
+    liError = 0 # OK
+    if iState == Macmahon.STATE_TEAMS :
+      if self.miState == Macmahon.STATE_NONE :
+        self.miState = iState
+
+    elif iState == Macmahon.STATE_SETTINGS :
+      if self.miState == Macmahon.STATE_NONE or self.miState == Macmahon.STATE_TEAMS :
+        self.miState = iState
+
+    elif iState == Macmahon.STATE_ROUND :
+      if not self.miState == Macmahon.STATE_NONE :
+        self.miState = iState
+
+        self.standings()
+        self.miRound += 1
+        #if self.miRound == 3 :
+        #  sys.exit(0)
+
+    if liState == Macmahon.STATE_TEAMS : # close teams definition
+      self.mTeams.initialize()
+
+    return liState == self.miState and not self.miState == Macmahon.STATE_ROUND
+
+
 
   @staticmethod
-  def valAmnt( sVal ) :
+  def valTeam( sVal ) :
     liRet = 0 # OK, default
     liLen = len( sVal )
-    if liLen > Acct.W_AMOUNT :
+    if liLen > 1 : # TODO
       liRet = 1
-      Acct.eprint( 'amount %s too long (%d), max is %d' % ( sVal, liLen, Acct.W_AMOUNT ) )
+      Macmahon.eprint( 'account name %s too long (%d), max is %d' % ( sVal, liLen, Acct.W_ACCT ) )
+    else : # TODO
+      liRet = 1
+      Macmahon.eprint( 'account name %s not valid, must start by %s' % ( sVal, Acct.gssTypes ) )
+    return liRet
+
+
+  @staticmethod
+  def valMatch( sMatch ) :
+    liRet = 1
+    return liRet
+
+
+  @staticmethod
+  def teamScore( p0, p1 ) :
+
     try :
-      lfAmount = float( sVal )
+      liScore = int( p0 )
+      lsTeam = p1
     except :
-      liRet = 1
-      Acct.eprint( 'amount %s is not a floating point number' % ( sVal ) )
-    return liRet
+      try :
+        liScore = int( p1 )
+        lsTeam = p0
+      except :
+        return None
 
-  @staticmethod
-  def valDate( sVal ) :
-    liRet = 0 # OK, default
-    liLen = len( sVal )
-    if liLen > Acct.W_DATE :
-      liRet += 1
-      Acct.eprint( 'date %s too long (%d), max is %d' % ( sVal, liLen, Acct.W_AMOUNT ) )
-    # TODO : check if ISO-format YYYY-MM-DD
-    try :
-      lDate = datetime.strptime( sVal, Acct.gsFmtDate )
-      #print( lDate.strftime( Acct.gsFmtDate ) )
-    except :
-      Acct.eprint( "%s not a valid date in %s format" % ( sVal, Acct.gsFmtDateUI ) )
-      liRet += 1
-      sys.exit( 2 )
-    return liRet
+    print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    return lsTeam, liScore
 
 
-  def parseBalLine( self, sLine0 ) :
-    liRet = 0 # OK
-    if sLine0[ 0 ] == "=" : # separator, discard this line
-      return liRet
-    # discard comment
-    sLine = sLine0.split( '#' )[ 0 ]
-    liLen = len( sLine )
-    if liLen <= 1 : pass # OK, empty or comment line
-    elif liLen < Acct.W_BAL_LINE :
-      print( "line lenght %d not enough, minimum %d" % ( liLen, Acct.W_BAL_LINE ) )
-      liRet = 1
-    else : # now a real line
-      lss = sLine.split( ":" )
-      lsAcctDeb = lss[ 0 ].strip()
-      lsAmount  = lss[ 1 ].lstrip().strip()
-      liRet += Acct.valAcct( lsAcctDeb )
-      liRet += Acct.valAmnt( lsAmount )
-      if liRet > 0 :
-        Acct.eprint( "FATAL. rejected balance line, contains %d format/content errors" )
-        liRet = 1 # meaning 1 line with errors
-        sys.exit( 1 )
-      else :
-        self.accountIni( lsAcctDeb, lsAmount )
-    return liRet
+  def parseLineTeam( self, sLine0 ) :
+
+    lss = sLine0.split()
+    print( "adding team %s" % lss[ 0 ] )
+    if self.mTeams.add( lss[ 0 ] ) == 0 :
+      print( "error adding team %s, is it already added?" % lss[ 0 ] )
+    # TODO : add initial values
+
+
+  def parseLineSetting( self, sLine0 ) :
+    pass
+
+
+  def processMatch( self, teamHome, teamAway ) :
+
+    lsTeamHome = teamHome[ 0 ]
+    lsTeamAway = teamAway[ 0 ]
+
+    lScoreHome = self.mTeams.getScore( lsTeamHome )
+    if lScoreHome == None :
+      print( "home team %s NOT found" % lsTeamHome )
+      print( self.mTeams.mDict )
+      sys.exit( 1 )
+
+    lScoreAway = self.mTeams.getScore( lsTeamAway )
+    if lScoreAway == None :
+      print( "away team %s NOT found" % lsTeamAway )
+      sys.exit( 1 )
+
+    liGoalsHome = teamHome[ 1 ]
+    liGoalsAway = teamAway[ 1 ]
+
+    if liGoalsHome > liGoalsAway :
+      liPointsHome = lScoreHome[ 0 ] + 3
+      liPointsAway = lScoreAway[ 0 ] + 0
+    elif liGoalsHome < liGoalsAway :
+      liPointsHome = lScoreHome[ 0 ] + 0
+      liPointsAway = lScoreAway[ 0 ] + 3
+    else : # ==
+      liPointsHome = lScoreHome[ 0 ] + 1
+      liPointsAway = lScoreAway[ 0 ] + 1
+
+    liSosHome = lScoreAway[ 1 ] + liPointsAway
+    liSosAway = lScoreHome[ 1 ] + liPointsHome
+
+    liSososHome = lScoreAway[ 2 ] + liSosAway
+    liSososAway = lScoreHome[ 2 ] + liSosHome
+
+    liGoalsMadeHome = lScoreHome[ 3 ] + liGoalsHome
+    liGoalsMadeAway = lScoreAway[ 3 ] + liGoalsAway
+
+    liGoalsRecvHome = lScoreHome[ 4 ] + liGoalsAway
+    liGoalsRecvAway = lScoreAway[ 4 ] + liGoalsHome
+
+    lNewScoreHome = ( liPointsHome, liSosHome, liSososHome, liGoalsMadeHome, liGoalsRecvHome )
+    lNewScoreAway = ( liPointsAway, liSosAway, liSososAway, liGoalsMadeAway, liGoalsRecvAway )
+
+    self.mTeams.setScore( lsTeamHome, lNewScoreHome )
+    self.mTeams.setScore( lsTeamAway, lNewScoreAway )
+
+
+
+  def parseLineMatch( self, sLine0 ) :
+    teamHome, teamAway = None, None
+    lss = sLine0.split()
+    if len( lss ) == 5 :
+      if lss[2] == "-" :
+        teamHome = Macmahon.teamScore( lss[0], lss[1] )
+        teamAway = Macmahon.teamScore( lss[3], lss[4] )
+
+    if teamHome == None and teamAway == None :
+      print( "ERROR parsing match result" )
+      print( lss )
+      sys.exit(1)
+
+    self.processMatch(teamHome, teamAway)
 
 
   def parseLine( self, sLine0 ) :
+
     liRet = 0 # OK
     # discard comment
     sLine = sLine0.split( '#' )[ 0 ]
     liLen = len( sLine )
     if liLen <= 1 : pass # OK, empty or comment line
-    elif liLen < Acct.W_LINE :
-      print( "line lenght %d not enough, minimum %d" % ( liLen, Acct.W_LINE ) )
+    elif liLen < Macmahon.LINE_MIN_LEN :
+      # TODO : use error method
+      print( "line lenght %d not enough, minimum %d" % ( liLen, Acct.W_BAL_LINE ) )
       liRet = 1
     else : # now a real line
-      lss = sLine.split()
-      lsAcctDeb = lss[ 0 ]
-      lsAcctCre = lss[ 1 ]
-      lsAmount  = lss[ 2 ]
-      lsDate    = lss[ 3 ]
-      liRet += Acct.valAcct( lsAcctDeb )
-      liRet += Acct.valAcct( lsAcctCre )
-      liRet += Acct.valAmnt( lsAmount )
-      liRet += Acct.valDate( lsDate )
-      if liRet > 0 :
-        Acct.eprint( "FATAL. rejected line, contains %d format/content errors" )
-        liRet = 1 # meaning 1 line with errors
-        sys.exit( 1 )
-      self.account( lsAcctDeb, lsAcctCre, lsAmount, lsDate )
+      lsL = sLine0[ : -1 ] # -2, assuming windows fileformat
+      if lsL[ 0 ] == ":" : # tag line
+        lss = lsL[ 1 : ].split()
+        if lss[ 0 ] == Macmahon.TAG_TEAMS :
+          lbState = self.state( Macmahon.STATE_TEAMS )
+        elif lss[ 0 ] == Macmahon.TAG_SETTINGS :
+          lbState = self.state( Macmahon.STATE_SETTINGS )
+        elif lss[ 0 ] == Macmahon.TAG_ROUND :
+          lbState = self.state( Macmahon.STATE_ROUND )
+          print( "=> round %d" % self.miRound )
+        else :
+          print( "unknown TAG " + lss[ 0 ] )
+          sys.exit( 1 )
+        if lbState :
+          print( "ERROR changing to state %s" % lss[ 0 ] )
+        else :
+          print( "changed to state %s" % lss[ 0 ] )
+      else : # content
+        if self.miState == Macmahon.STATE_TEAMS :
+          self.parseLineTeam( lsL )
+        elif self.miState == Macmahon.STATE_SETTINGS :
+          self.parseLineSetting( lsL )
+        elif self.miState == Macmahon.STATE_ROUND :
+          self.parseLineMatch( lsL )
+
     return liRet
 
 
-  def accountIni( self, sAcctDeb, sAmount ) :
-
-    print( "INI amount :%s:, on %s" % ( sAmount, sAcctDeb ) )
-    lfAmount = float( sAmount ) # checked before
-
-    try :
-      lfSaldo = self.mDictSaldo[ sAcctDeb ]
-      Acct.eprint( "FATAL, duplicate initial for account %s", sAcctDeb )
-      sys.exit( 1 )
-    except :
-      lfSaldo = lfAmount
-    self.mDictSaldo[ sAcctDeb ] = lfSaldo
-    print( "%12s : %9.2f " % ( sAcctDeb, lfSaldo ) )
+  def standings( self ) :
+    for lsTeam in self.mTeams.mDict.keys() :
+      print( "----" )
+      print( lsTeam )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      print( lScore )
 
 
-  def account( self, sAcctDeb, sAcctCre, sAmount, sDate ) :
-
-    self.miMov += 1
-    print( "validating mov %d on file ..." % ( self.miMov ) )
-
-    # sDate is OK, was checked before
-    lDate = datetime.strptime( sDate, Acct.gsFmtDate )
-    # <, >= : 2n limit queda fora
-    if not Acct.gTupDateRange == None :
-     if lDate < Acct.gTupDateRange[ 0 ] or lDate >= Acct.gTupDateRange[ 1 ] :
-      print( "mov with date %s, outside date range limits" % sDate )
-      print( "-" )
-      return
-
-    print( "accounting mov %d" % ( self.miMovAcct ) )
-    if self.mDateIni == None : self.mDateIni = lDate
-    else :
-      if lDate < self.mDateIni : self.mDateIni = lDate
-    if self.mDateFin == None : self.mDateFin = lDate
-    else :
-      if lDate > self.mDateFin : self.mDateFin = lDate
-
-    print( "amount %s, on %s(D) - %s(H)" % ( sAmount, sAcctDeb, sAcctCre ) )
-    lfAmount = float( sAmount ) # checked before
-
-    try :
-      lfSaldo = self.mDictSaldo[ sAcctDeb ]
-    except :
-      lfSaldo = 0.0
-    lfSaldo2 = lfSaldo + lfAmount
-    self.mDictSaldo[ sAcctDeb ] = lfSaldo2
-    print( "%12s : %9.2f => %9.2f" % ( sAcctDeb, lfSaldo, lfSaldo2 ) )
-    # TODO : display mov method?
-
-    try :
-      lfSaldo = self.mDictSaldo[ sAcctCre ]
-    except :
-      lfSaldo = 0.0
-    lfSaldo2 = lfSaldo - lfAmount
-    self.mDictSaldo[ sAcctCre ] = lfSaldo2
-    print( "%12s : %9.2f => %9.2f" % ( sAcctCre, lfSaldo, lfSaldo2 ) )
-
-    self.miMovAcct += 1
-
-    print( "--" )
-    
-
-  # TODO rename to balance()
-  def balance( self ) :
-    lfGent = .0
-    lfGone = .0
-    lfCash = .0
-    lfPend = .0
-    lfStok = .0
-    lfExtl = .0
-    lsSepTitle = "========="
-    lsSepSaldo = "========================"
-    print( lsSepTitle[ : 4 ] ) # trick piped sed
-    print( lsSepTitle )
-    print( "BALANCES:" )
-    print( lsSepTitle )
-    print( "total read file transactions = %d" % self.miMov )
-    print( "total accounted transactions = %d" % self.miMovAcct )
-    if Acct.gTupDateRange == None :
-      print( "NO date limit for transactions set" )
-    else :
-      lsDate1 = Acct.gTupDateRange[ 0 ].strftime( Acct.gsFmtDate )
-      lsDate2 = (Acct.gTupDateRange[ 1 ] - timedelta( days = 1 )).strftime( Acct.gsFmtDate )
-      print( "date limit for transactions : %s - %s" % ( lsDate1, lsDate2 ) )
-    if self.miMovAcct > 0 :
-      lsDateIni = self.mDateIni.strftime( Acct.gsFmtDate )
-      lsDateFin = self.mDateFin.strftime( Acct.gsFmtDate )
-      print( "found transactions from %s to %s" % ( lsDateIni, lsDateFin ) )
-    else :
-      print( "NO accounted transactions" )
-    lListKeys = self.mDictSaldo.keys()
-    #print lListKeys
-    lListKeys2 = sorted( lListKeys )
-    #print lListKeys2
-    print( lsSepSaldo )
-    for lsAcct in lListKeys2 :
-      # no need to try:
-      lfSaldo = self.mDictSaldo[ lsAcct ]
-      print( "%-12s: %9.2f" % ( lsAcct, lfSaldo ) )
-      # TODO : use Acct.W_ACCT for formatting
-
-      lsAcctType = lsAcct[ 0 : 2 ]
-      # TODO : use a dictionary for this
-      if lsAcctType == "C_" : # caixa
-        lfCash += lfSaldo
-      elif lsAcctType == "D_" : # despesa
-        lfGone += lfSaldo
-      elif lsAcctType == "P_" : # people
-        lfGent += lfSaldo
-      elif lsAcctType == "F_" : # factures
-        lfPend += lfSaldo
-      elif lsAcctType == "S_" : # capital
-        lfStok += lfSaldo
-      elif lsAcctType == "X_" : # eXternal
-        lfExtl += lfSaldo
-      else :
-        Acct.eprint( "unknown acct type '%s'" % lsAcctType )
-        sys.exit( 1 )
-    print( lsSepSaldo )
-    print( "%-12s : %9.2f" % ( "total stock",  lfStok ) )
-    print( "%-12s : %9.2f" % ( "total people", lfGent ) )
-    print( "%-12s : %9.2f" % ( "total xtrnal", lfExtl ) )
-    print( "%-12s : %9.2f" % ( "total desp",   lfGone ) )
-    print( "%-12s : %9.2f" % ( "total credit", lfPend ) )
-    print( "%-12s : %9.2f" % ( "total cash",   lfCash ) )
-
-
-  def readMovs( self, sFile = None ) :
+  def readFile( self, sFile = None ) :
     if sFile == None :
       self.mFile = sys.stdin
       print( "reading from stdin" )
@@ -305,11 +323,13 @@ class Acct :
         print( "FATAL, could not open file " + sFile )
         sys.exit( 1 )
 
+    liLines = 0
     liErrors = 0
     print( "----------" )
     for lsLine in self.mFile :
+      liLines += 1
       liErrors += self.parseLine( lsLine )
-    print( "file processed, lines with errors: %d" % liErrors )
+    print( "file processed, lines=%d, lines with errors: %d" % ( liLines, liErrors ) )
     if not sFile == None :
       self.mFile.close()
 
@@ -331,83 +351,21 @@ class Acct :
 
 
   @staticmethod
-  def parseFlexDate( sDate ) :
-
-    lDate = None
-    # check in this order!
-    for lsFmt in ( Acct.gsFmtDate, Acct.gsFmtMonth, Acct.gsFmtYear ) :
-      try :
-        lDate = datetime.strptime( sDate, lsFmt )
-        print( "%s : is a %s date! => %s" % ( sDate, lsFmt, str( lDate ) ) )
-        break
-      except :
-        print( "%s : not a %s date" % ( sDate, lsFmt ) )
-        continue
-
-    return lDate
-
-
-  @staticmethod
-  def parseDates( sDates ) :
-
-    lDates = None # return value, default
-    lList = []
-    lss = sDates.split( ':' )
-    print( lss )
-    liS = len( lss )
-    if liS == 1 : # 1 date (year/month)
-      lDate = Acct.parseFlexDate( lss[ 0 ] )
-      # TODO : add 1 day/month/year to 2nd date depending on len
-      lList.append( lDate )
-      lList.append( lDate )
-    elif liS == 2 : # 2 dates (year/month)
-      if len( lss[ 0 ] ) == len( lss[ 1 ] ) :
-        for lsDate in lss :
-          lDate = Acct.parseFlexDate( lsDate )
-          if not lDate == None :
-            lList.append( lDate )
-      else :
-        Acct.eprint( "FATAL: date range is not formed by 2 equal-length/format" )
-            
-    if len( lList ) == 2 :
-      lDate0 = lList[ 0 ]
-      liLen = len( lss[ 0 ] )
-      if liLen == 10 :
-        lTimeDelta = timedelta( days = 1 )
-        lDate2 = lDate + lTimeDelta
-      elif liLen == 7 :
-        liMonth = lDate.month + 1
-        if liMonth > 12 :
-          liMonth -= 12
-          liYear = lDate.year + 1
-        lDate1 = lDate.replace( month = liMonth )
-        lDate2 = lDate1.replace( year = lDate.year )
-      elif liLen == 4 :
-        lDate2 = lDate.replace( year = lDate.year + 1 )
-      if lDate0 >= lDate2 :
-        Acct.eprint( "FATAL: date range start is later than end" )
-      else :
-        lDates = tuple( ( lDate0, lDate2 ) )
-    return lDates
-
-
-
-  @staticmethod
   def checkOptions( pListParams ) :
 
     print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'd:i:' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:d:i:' )
 
     except getopt.GetoptError:
-      Acct.eprint( "FATAL : error analyzing command line options" )
-      Acct.eprint( "" )
-      Acct.usage()
+      Macmahon.eprint( "FATAL : error analyzing command line options" )
+      Macmahon.eprint( "" )
+      Macmahon.usage()
       sys.exit( 1 )
 
     # TODO : use shift / setenv --
 
-    Acct.gsFileInitialBalance = None
+    Macmahon.gsFileInitialBalance = None
     #print( lOptList )
     #print( lList )
     lDateRange = None
@@ -415,42 +373,51 @@ class Acct :
       #print( 'lOpt :' + str( lOpt )
       if lOpt[0] == '-d':
         lsVal = lOpt[1]
-        lDateRange = Acct.parseDates( lsVal )
+        lDateRange = Macmahon.parseDates( lsVal )
         if lDateRange == None :
-          Acct.eprint( 'FATAL: Invalid date/date range' )
-          Acct.usage()
+          Macmahon.eprint( 'FATAL: Invalid date/date range' )
+          Macmahon.usage()
           sys.exit( 1 )
         print( "date range: %s - %s" % ( lDateRange[ 0 ], lDateRange[ 1 ] ) )
       if lOpt[0] == '-i':
         lsVal = lOpt[1]
-        Acct.gsFileInitialBalance = lsVal
-        print( "initial balance file : %s" % Acct.gsFileInitialBalance )
+        Macmahon.gsFileInitialBalance = lsVal
+        print( "initial balance file : %s" % Macmahon.gsFileInitialBalance )
+      if lOpt[0] == '-f':
+        lsVal = lOpt[1]
+        Macmahon.gsFile = lsVal
+        print( "file : %s" % Macmahon.gsFile )
       if lOpt[0] == '-M':
         lsVal = lOpt[1]
         try :
           liVal = int( lsVal )
           self.miMaxDY = liVal
         except :
-          Acct.eprint( 'FATAL: NON-numerical value for Max DY (Y diff)' )
-          Acct.usage()
+          Macmahon.eprint( 'FATAL: NON-numerical value for Max DY (Y diff)' )
+          Macmahon.usage()
           sys.exit( 1 )
           # TODO : only-1 exit point
 
-    Acct.gsFiles = lList
-    Acct.gTupDateRange = lDateRange
+    Macmahon.gsFiles = lList
+    Macmahon.gTupDateRange = lDateRange
 
 
 if __name__ == "__main__" :
 
-  Acct.checkOptions( sys.argv[ 1 : ] )
-  lAcct = Acct()
-  if not Acct.gsFileInitialBalance == None :
-    lAcct.readBalance( Acct.gsFileInitialBalance )
-  if len( Acct.gsFiles ) == 0 :
+  Macmahon.checkOptions( sys.argv[ 1 : ] )
+  lMacmahon = Macmahon()
+  lMacmahon.readFile( Macmahon.gsFile )
+
+  """
+  if not Macmahon.gsFileInitialBalance == None :
+    lMacmahon.readBalance( Macmahon.gsFileInitialBalance )
+  if len( Macmahon.gsFiles ) == 0 :
     # use stdin
-    lAcct.readMovs()
+    lMacmahon.readMovs()
   else :
-    for lsFile in Acct.gsFiles :
-      lAcct.readMovs( lsFile )
-  lAcct.balance()
+    for lsFile in Macmahon.gsFiles :
+      lMacmahon.readMovs( lsFile )
+  """
+
+  lMacmahon.standings()
 
