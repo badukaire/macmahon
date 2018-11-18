@@ -226,25 +226,6 @@ class Macmahon :
 
 
   @staticmethod
-  def valTeam( sVal ) :
-    liRet = 0 # OK, default
-    liLen = len( sVal )
-    if liLen > 1 : # TODO
-      liRet = 1
-      Macmahon.eprint( 'account name %s too long (%d), max is %d' % ( sVal, liLen, Acct.W_ACCT ) )
-    else : # TODO
-      liRet = 1
-      Macmahon.eprint( 'account name %s not valid, must start by %s' % ( sVal, Acct.gssTypes ) )
-    return liRet
-
-
-  @staticmethod
-  def valMatch( sMatch ) :
-    liRet = 1
-    return liRet
-
-
-  @staticmethod
   def teamScore( p0, p1 ) :
 
     try :
