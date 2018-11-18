@@ -14,6 +14,7 @@ castelldefels
 polo
 terrassa
 linia22
+BYE
 
 
 
@@ -35,6 +36,7 @@ athc 0 - 0 valles
 junior 6 - 0 castelldefels
 polo 7 - 1 linia22
 iluro 1 - 7 egara
+BYE 0 - 0 terrassa
 
 
 :round
@@ -43,6 +45,7 @@ castelldefels 1 - athc 6
 linia22 0 - junior 8
 egara 1 - polo 7
 terrassa 4 - iluro 1
+valles 0 - 0 BYE
 
 
 :round
@@ -51,6 +54,7 @@ valles 2 - castelldefels 1
 athc 9 - linia22 1
 junior 5 - egara 1
 polo 3 - terrassa 3
+BYE 0 - 0 iluro
 
 
 :round
@@ -59,6 +63,7 @@ linia22 2 - valles 3
 egara 0 - athc 3
 terrassa 0 - junior 1
 iluro 0 - polo 15
+castelldefels 0 - 0 BYE
 
 
 
