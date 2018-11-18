@@ -17,18 +17,19 @@ import getopt
 
 class Score :
   
-  gsHeaderShort1 = " p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS"
-  gsSepHdrShort1 = "---|------------------|-----------|------"
-  gsFormatShort1 = "%2d | %3d - %3d = %3d  | %4d %4d | %3d"
+  gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS"
+  gsSepHdrShort1 = "------|------------------|-----------|------"
+  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d  | %4d %4d | %3d"
 
 
-  def __init__( self, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusHalfSOS = 0 ) :
+  def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusHalfSOS = 0 ) :
 
-    self.set( iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS )
+    self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS )
 
 
-  def set( self, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS ) :
+  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS ) :
 
+    self.miMatches = iMatches
     self.miPoints = iPoints
     self.miGoalsMade = iGoalsMade
     self.miGoalsRecv = iGoalsRecv
@@ -40,6 +41,7 @@ class Score :
   @staticmethod
   def textFormat_short1( pScore ) :
     return Score.gsFormatShort1 % (
+      pScore.miMatches,
       pScore.miPoints,
       pScore.miGoalsMade,
       pScore.miGoalsRecv,
@@ -286,6 +288,9 @@ class Macmahon :
       print( "away team %s NOT found" % lsTeamAway )
       sys.exit( 1 )
 
+    liMatchesHome = lScoreHome.miMatches + 1
+    liMatchesAway = lScoreAway.miMatches + 1
+
     liGoalsHome = teamHome[ 1 ]
     liGoalsAway = teamAway[ 1 ]
 
@@ -314,8 +319,8 @@ class Macmahon :
     liPointSosHome = liPointsHome + liSosHome / 2
     liPointSosAway = liPointsAway + liSosAway / 2
 
-    lNewScoreHome = Score( liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
-    lNewScoreAway = Score( liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
+    lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
+    lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
 
     self.mTeams.setScore( lsTeamHome, lNewScoreHome )
     self.mTeams.setScore( lsTeamAway, lNewScoreAway )
