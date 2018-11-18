@@ -17,7 +17,7 @@ linia22
 
 
 
-:system
+:settings
 
 # may include how to evaluate the ranking
 
