@@ -33,7 +33,7 @@ linia22
 
 athc 1 - 0 valles
 junior 6 - 0 castelldefels
-polo 7 - 1 linia 22
+polo 7 - 1 linia22
 iluro 1 - 7 egara
 
 
