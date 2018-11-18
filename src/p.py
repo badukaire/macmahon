@@ -277,6 +277,11 @@ class Macmahon :
     lsTeamHome = teamHome[ 0 ]
     lsTeamAway = teamAway[ 0 ]
 
+    if self.miOptBye == Macmahon.BYE_IGNORE :
+      if "BYE" in ( lsTeamHome, lsTeamAway ) :
+        print( "BYE match, ignoring" )
+        return
+
     lScoreHome = self.mTeams.getScore( lsTeamHome )
     if lScoreHome == None :
       print( "home team %s NOT found" % lsTeamHome )
