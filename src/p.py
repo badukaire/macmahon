@@ -16,7 +16,7 @@ import getopt
 
 class Teams :
   
-  DEFAULT_VALUES = (0, 0, 0, 0, 0) # points, SOS, SOSOS, goals+, goals-
+  DEFAULT_VALUES = (0, 0, 0, 0, 0, 0) # points, SOS, SOSOS, goals+, goals-, points+SOS
 
   def __init__( self ) :
 
@@ -239,8 +239,11 @@ class Macmahon :
     liGoalsRecvHome = lScoreHome[ 4 ] + liGoalsAway
     liGoalsRecvAway = lScoreAway[ 4 ] + liGoalsHome
 
-    lNewScoreHome = ( liPointsHome, liSosHome, liSososHome, liGoalsMadeHome, liGoalsRecvHome )
-    lNewScoreAway = ( liPointsAway, liSosAway, liSososAway, liGoalsMadeAway, liGoalsRecvAway )
+    liPointSosHome = liPointsHome + liSosHome / 2
+    liPointSosAway = liPointsAway + liSosAway / 2
+
+    lNewScoreHome = ( liPointsHome, liSosHome, liSososHome, liGoalsMadeHome, liGoalsRecvHome, liPointSosHome)
+    lNewScoreAway = ( liPointsAway, liSosAway, liSososAway, liGoalsMadeAway, liGoalsRecvAway, liPointSosAway)
 
     self.mTeams.setScore( lsTeamHome, lNewScoreHome )
     self.mTeams.setScore( lsTeamAway, lNewScoreAway )
