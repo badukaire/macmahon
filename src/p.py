@@ -14,9 +14,28 @@ import sys
 import getopt
 
 
+class Score :
+  
+
+
+  def __init__( self, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusHalfSOS = 0 ) :
+
+    self.set( iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS )
+
+
+  def set( self, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusHalfSOS ) :
+
+    self.miPoints = iPoints
+    self.miGoalsMade = iGoalsMade
+    self.miGoalsRecv = iGoalsRecv
+    self.miSOS = iSOS
+    self.miSOSOS = iSOSOS
+    self.miPointsPlusHalfSOS = iPointsPlusHalfSOS
+
+
+
 class Teams :
   
-  DEFAULT_VALUES = (0, 0, 0, 0, 0, 0) # points, SOS, SOSOS, goals+, goals-, points+SOS
 
   def __init__( self ) :
 
@@ -27,7 +46,7 @@ class Teams :
 
     self.mDict = dict()
     for lsTeam in self.mSet :
-      self.mDict[ lsTeam ] = Teams.DEFAULT_VALUES
+      self.mDict[ lsTeam ] = Score()
     self.mSet = None
 
 
@@ -218,32 +237,32 @@ class Macmahon :
     liGoalsAway = teamAway[ 1 ]
 
     if liGoalsHome > liGoalsAway :
-      liPointsHome = lScoreHome[ 0 ] + 3
-      liPointsAway = lScoreAway[ 0 ] + 0
+      liPointsHome = lScoreHome.miPoints + 3
+      liPointsAway = lScoreAway.miPoints + 0
     elif liGoalsHome < liGoalsAway :
-      liPointsHome = lScoreHome[ 0 ] + 0
-      liPointsAway = lScoreAway[ 0 ] + 3
+      liPointsHome = lScoreHome.miPoints + 0
+      liPointsAway = lScoreAway.miPoints + 3
     else : # ==
-      liPointsHome = lScoreHome[ 0 ] + 1
-      liPointsAway = lScoreAway[ 0 ] + 1
+      liPointsHome = lScoreHome.miPoints + 1
+      liPointsAway = lScoreAway.miPoints + 1
 
-    liSosHome = lScoreAway[ 1 ] + liPointsAway
-    liSosAway = lScoreHome[ 1 ] + liPointsHome
+    liGoalsMadeHome = lScoreHome.miGoalsMade + liGoalsHome
+    liGoalsMadeAway = lScoreAway.miGoalsMade + liGoalsAway
 
-    liSososHome = lScoreAway[ 2 ] + liSosAway
-    liSososAway = lScoreHome[ 2 ] + liSosHome
+    liGoalsRecvHome = lScoreHome.miGoalsRecv + liGoalsAway
+    liGoalsRecvAway = lScoreAway.miGoalsRecv + liGoalsHome
 
-    liGoalsMadeHome = lScoreHome[ 3 ] + liGoalsHome
-    liGoalsMadeAway = lScoreAway[ 3 ] + liGoalsAway
+    liSosHome = lScoreAway.miSOS + liPointsAway
+    liSosAway = lScoreHome.miSOS + liPointsHome
 
-    liGoalsRecvHome = lScoreHome[ 4 ] + liGoalsAway
-    liGoalsRecvAway = lScoreAway[ 4 ] + liGoalsHome
+    liSososHome = lScoreAway.miSOSOS + liSosAway
+    liSososAway = lScoreHome.miSOSOS + liSosHome
 
     liPointSosHome = liPointsHome + liSosHome / 2
     liPointSosAway = liPointsAway + liSosAway / 2
 
-    lNewScoreHome = ( liPointsHome, liSosHome, liSososHome, liGoalsMadeHome, liGoalsRecvHome, liPointSosHome)
-    lNewScoreAway = ( liPointsAway, liSosAway, liSososAway, liGoalsMadeAway, liGoalsRecvAway, liPointSosAway)
+    lNewScoreHome = Score( liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
+    lNewScoreAway = Score( liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
 
     self.mTeams.setScore( lsTeamHome, lNewScoreHome )
     self.mTeams.setScore( lsTeamAway, lNewScoreAway )
@@ -257,6 +276,7 @@ class Macmahon :
       if lss[2] == "-" :
         teamHome = Macmahon.teamScore( lss[0], lss[1] )
         teamAway = Macmahon.teamScore( lss[3], lss[4] )
+        print( "--" )
 
     if teamHome == None and teamAway == None :
       print( "ERROR parsing match result" )
