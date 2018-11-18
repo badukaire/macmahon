@@ -57,6 +57,7 @@ class Teams :
   def __init__( self ) :
 
     self.mSet = set()
+    self.mListSortedTeams = None
 
 
   def initialize( self ) :
@@ -65,6 +66,7 @@ class Teams :
     for lsTeam in self.mSet :
       self.mDict[ lsTeam ] = Score()
     self.mSet = None
+    self.mListSortedTeams = None
 
 
   def add( self, sTeam ) :
@@ -97,6 +99,19 @@ class Teams :
       print( "team %s NOT found, cant be updated" % sTeam )
       lRet = None
     return lRet
+
+
+  def sort( self, iOptSort ) :
+
+    if iOptSort == Macmahon.SORT_REGULAR :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_REGULAR )
+      self.mListSortedTeams = sorted( self.mDict, key = lambda team : self.mDict[ team ].miPoints, reverse = True )
+    elif iOptSort == Macmahon.SORT_HALFSOS :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_HALFSOS )
+      self.mListSortedTeams = sorted( self.mDict, key = lambda team : self.mDict[ team ].miPointsPlusHalfSOS, reverse = True )
+    else : # unsorted
+      print( "sorting by: unsorted" )
+      self.mListSortedTeams = self.mDict.keys()
 
 
 class Settings :
@@ -365,16 +380,18 @@ class Macmahon :
 
 
   def standings_short1( self, bHeader = True ) :
+
     if bHeader :
       print( "%-14s %s" % ( Macmahon.TEXT_STATE_TEAMS, Score.gsHeaderShort1 ) )
       print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
-    for lsTeam in self.mTeams.mDict.keys() :
+    for lsTeam in self.mTeams.mListSortedTeams :
       lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
       print( "%-14s %s" % ( lsTeam, lsRow ) )
 
 
   def standings_set( self, bGoalsFirst = True ) :
-    for lsTeam in self.mTeams.mDict.keys() :
+
+    for lsTeam in self.mTeams.mListSortedTeams :
       print( "----" )
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
@@ -386,6 +403,8 @@ class Macmahon :
 
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
+
+    self.mTeams.sort( self.miOptSort )
 
     if iFormat == Macmahon.FORMAT_NONE :
       iFormat = self.miOptFormat
