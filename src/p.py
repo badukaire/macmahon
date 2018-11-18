@@ -16,7 +16,9 @@ import getopt
 
 class Score :
   
-  gsFormatShort1 = "%2d | %3d - %3d (avg: %3d) | %3d %3d | %3d"
+  gsHeaderShort1 = " p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS"
+  gsSepHdrShort1 = "---|------------------|-----------|------"
+  gsFormatShort1 = "%2d | %3d - %3d = %3d  | %4d %4d | %3d"
 
 
   def __init__( self, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusHalfSOS = 0 ) :
@@ -35,7 +37,7 @@ class Score :
 
 
   @staticmethod
-  def textFormat1( pScore ) :
+  def textFormat_short1( pScore ) :
     return Score.gsFormatShort1 % (
       pScore.miPoints,
       pScore.miGoalsMade,
@@ -340,10 +342,14 @@ class Macmahon :
     return liRet
 
 
-  def standings( self ) :
+  def standings( self, bHeader = True ) :
+    if bHeader :
+      print( "%-14s %s" % ( Macmahon.TAG_TEAMS, Score.gsHeaderShort1 ) )
+      print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
     for lsTeam in self.mTeams.mDict.keys() :
-      lsRow = Score.textFormat1( self.mTeams.mDict[ lsTeam ] )
-      print( "%20s %s" % ( lsTeam, lsRow ) )
+      lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
+      print( "%-14s %s" % ( lsTeam, lsRow ) )
+
 
 
   def readFile( self, sFile = None ) :
