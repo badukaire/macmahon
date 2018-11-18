@@ -16,6 +16,7 @@ import getopt
 
 class Score :
   
+  gsFormatShort1 = "%2d | %3d - %3d (avg: %3d) | %3d %3d | %3d"
 
 
   def __init__( self, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusHalfSOS = 0 ) :
@@ -31,6 +32,19 @@ class Score :
     self.miSOS = iSOS
     self.miSOSOS = iSOSOS
     self.miPointsPlusHalfSOS = iPointsPlusHalfSOS
+
+
+  @staticmethod
+  def textFormat1( pScore ) :
+    return Score.gsFormatShort1 % (
+      pScore.miPoints,
+      pScore.miGoalsMade,
+      pScore.miGoalsRecv,
+      pScore.miGoalsMade - pScore.miGoalsRecv,
+      pScore.miSOS,
+      pScore.miSOSOS,
+      pScore.miPointsPlusHalfSOS
+    )
 
 
 
@@ -328,11 +342,8 @@ class Macmahon :
 
   def standings( self ) :
     for lsTeam in self.mTeams.mDict.keys() :
-      print( "----" )
-      print( lsTeam )
-      lScore = self.mTeams.mDict[ lsTeam ]
-      lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusHalfSOS )
-      print( lSet )
+      lsRow = Score.textFormat1( self.mTeams.mDict[ lsTeam ] )
+      print( "%20s %s" % ( lsTeam, lsRow ) )
 
 
   def readFile( self, sFile = None ) :
