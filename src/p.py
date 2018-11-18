@@ -331,7 +331,8 @@ class Macmahon :
       print( "----" )
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
-      print( lScore )
+      lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusHalfSOS )
+      print( lSet )
 
 
   def readFile( self, sFile = None ) :
