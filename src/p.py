@@ -16,7 +16,7 @@ import getopt
 
 
 class Score :
-  
+
   gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS"
   gsSepHdrShort1 = "------|------------------|-----------|------"
   gsFormatShort1 = "%2d %2d | %3d - %3d = %3d  | %4d %4d | %3d"
@@ -54,7 +54,6 @@ class Score :
 
 
 class Teams :
-  
 
   def __init__( self ) :
 
@@ -126,6 +125,8 @@ class Round :
 class Macmahon :
 
   LINE_MIN_LEN = 4
+
+  TEXT_BYE = "BYE"
 
   TEXT_STATE_TEAMS = "teams"
   TEXT_STATE_SETTINGS = "settings"
@@ -215,7 +216,7 @@ class Macmahon :
     """Set state
     Return True if changed successfully
     """
-    
+
     liState = self.miState
     liError = 0 # OK
     if iState == Macmahon.STATE_TEAMS :
@@ -278,7 +279,7 @@ class Macmahon :
     lsTeamAway = teamAway[ 0 ]
 
     if self.miOptBye == Macmahon.BYE_IGNORE :
-      if "BYE" in ( lsTeamHome, lsTeamAway ) :
+      if Macmahon.TEXT_BYE in ( lsTeamHome, lsTeamAway ) :
         print( "BYE match, ignoring" )
         return
 
@@ -299,21 +300,39 @@ class Macmahon :
     liGoalsHome = teamHome[ 1 ]
     liGoalsAway = teamAway[ 1 ]
 
-    if liGoalsHome > liGoalsAway :
-      liPointsHome = lScoreHome.miPoints + 3
-      liPointsAway = lScoreAway.miPoints + 0
-    elif liGoalsHome < liGoalsAway :
-      liPointsHome = lScoreHome.miPoints + 0
-      liPointsAway = lScoreAway.miPoints + 3
-    else : # ==
-      liPointsHome = lScoreHome.miPoints + 1
-      liPointsAway = lScoreAway.miPoints + 1
+    lbScoreProcessed = False
+    if Macmahon.TEXT_BYE in ( lsTeamHome, lsTeamAway ) :
+      if self.miOptBye == Macmahon.BYE_WIN :
+        if lsTeamHome == Macmahon.TEXT_BYE :
+          liPointsHome = lScoreHome.miPoints + 0
+          liPointsAway = lScoreAway.miPoints + 3
+        else :
+          liPointsHome = lScoreHome.miPoints + 3
+          liPointsAway = lScoreAway.miPoints + 0
+        liGoalsMadeHome = lScoreHome.miGoalsMade
+        liGoalsMadeAway = lScoreAway.miGoalsMade
+        liGoalsRecvHome = lScoreHome.miGoalsRecv
+        liGoalsRecvAway = lScoreAway.miGoalsRecv
+        lbScoreProcessed = True
+      elif self.miOptBye == Macmahon.BYE_DRAW :
+        pass # this is processed below
 
-    liGoalsMadeHome = lScoreHome.miGoalsMade + liGoalsHome
-    liGoalsMadeAway = lScoreAway.miGoalsMade + liGoalsAway
+    if lbScoreProcessed == False :
+      if liGoalsHome > liGoalsAway :
+        liPointsHome = lScoreHome.miPoints + 3
+        liPointsAway = lScoreAway.miPoints + 0
+      elif liGoalsHome < liGoalsAway :
+        liPointsHome = lScoreHome.miPoints + 0
+        liPointsAway = lScoreAway.miPoints + 3
+      else : # ==
+        liPointsHome = lScoreHome.miPoints + 1
+        liPointsAway = lScoreAway.miPoints + 1
 
-    liGoalsRecvHome = lScoreHome.miGoalsRecv + liGoalsAway
-    liGoalsRecvAway = lScoreAway.miGoalsRecv + liGoalsHome
+      liGoalsMadeHome = lScoreHome.miGoalsMade + liGoalsHome
+      liGoalsMadeAway = lScoreAway.miGoalsMade + liGoalsAway
+
+      liGoalsRecvHome = lScoreHome.miGoalsRecv + liGoalsAway
+      liGoalsRecvAway = lScoreAway.miGoalsRecv + liGoalsHome
 
     liSosHome = lScoreAway.miSOS + liPointsAway
     liSosAway = lScoreHome.miSOS + liPointsHome
