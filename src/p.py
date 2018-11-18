@@ -109,9 +109,9 @@ class Macmahon :
 
   LINE_MIN_LEN = 4
 
-  TAG_TEAMS = "teams"
-  TAG_SETTINGS = "settings"
-  TAG_ROUND = "round"
+  TEXT_STATE_TEAMS = "teams"
+  TEXT_STATE_SETTINGS = "settings"
+  TEXT_STATE_ROUND = "round"
 
   STATE_NONE = 0
   STATE_TEAMS = 1
@@ -323,11 +323,11 @@ class Macmahon :
       lsL = sLine0[ : -1 ] # -2, assuming windows fileformat
       if lsL[ 0 ] == ":" : # tag line
         lss = lsL[ 1 : ].split()
-        if lss[ 0 ] == Macmahon.TAG_TEAMS :
+        if lss[ 0 ] == Macmahon.TEXT_STATE_TEAMS :
           lbState = self.state( Macmahon.STATE_TEAMS )
-        elif lss[ 0 ] == Macmahon.TAG_SETTINGS :
+        elif lss[ 0 ] == Macmahon.TEXT_STATE_SETTINGS :
           lbState = self.state( Macmahon.STATE_SETTINGS )
-        elif lss[ 0 ] == Macmahon.TAG_ROUND :
+        elif lss[ 0 ] == Macmahon.TEXT_STATE_ROUND :
           lbState = self.state( Macmahon.STATE_ROUND )
           print( "=> round %d" % self.miRound )
         else :
@@ -350,7 +350,7 @@ class Macmahon :
 
   def standings_short1( self, bHeader = True ) :
     if bHeader :
-      print( "%-14s %s" % ( Macmahon.TAG_TEAMS, Score.gsHeaderShort1 ) )
+      print( "%-14s %s" % ( Macmahon.TEXT_STATE_TEAMS, Score.gsHeaderShort1 ) )
       print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
     for lsTeam in self.mTeams.mDict.keys() :
       lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
