@@ -6,7 +6,7 @@
 #:   -f <file> : files to read (by now just reading a file)
 #:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-#:   -s <sort> : sort by: REGULAR (points/goal avg), HALFSOS (points+SOS/2)
+#:   -s <sort> : sort by: REGULAR (points/goal avg), REGULARSOS (points/SOS,SOSOS), HALFSOS (points+SOS/2)
 #:
 #: file contains ...
 from __future__ import print_function
@@ -107,6 +107,9 @@ class Teams :
     if iOptSort == Macmahon.SORT_REGULAR :
       print( "sorting by: %s" % Macmahon.OPT_SORT_REGULAR )
       self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv ), reverse = True )
+    elif iOptSort == Macmahon.SORT_REGULARSOS :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_REGULARSOS )
+      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miSOS, self.mDict[ team ].miSOSOS ), reverse = True )
     elif iOptSort == Macmahon.SORT_HALFSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_HALFSOS )
       self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPointsPlusHalfSOS, self.mDict[ team ].miPoints ), reverse = True )
@@ -153,10 +156,12 @@ class Macmahon :
   BYE_WIN = 3
 
   OPT_SORT_REGULAR = "REGULAR"
+  OPT_SORT_REGULARSOS = "REGULARSOS"
   OPT_SORT_HALFSOS = "HALFSOS"
   SORT_NONE = 0
   SORT_REGULAR = 1
-  SORT_HALFSOS = 2
+  SORT_REGULARSOS = 2
+  SORT_HALFSOS = 3
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -172,6 +177,7 @@ class Macmahon :
 
   gOptDict_Sort = {
     OPT_SORT_REGULAR : SORT_REGULAR,
+    OPT_SORT_REGULARSOS : SORT_REGULARSOS,
     OPT_SORT_HALFSOS : SORT_HALFSOS,
   }
 
