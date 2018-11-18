@@ -331,7 +331,7 @@ class Macmahon :
       print( "----" )
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
-      lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusHalfSOS )
+      lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusHalfSOS )
       print( lSet )
 
 
