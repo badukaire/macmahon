@@ -106,10 +106,10 @@ class Teams :
 
     if iOptSort == Macmahon.SORT_REGULAR :
       print( "sorting by: %s" % Macmahon.OPT_SORT_REGULAR )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : self.mDict[ team ].miPoints, reverse = True )
+      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv ), reverse = True )
     elif iOptSort == Macmahon.SORT_HALFSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_HALFSOS )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : self.mDict[ team ].miPointsPlusHalfSOS, reverse = True )
+      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPointsPlusHalfSOS, self.mDict[ team ].miPoints ), reverse = True )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
