@@ -118,6 +118,11 @@ class Macmahon :
   STATE_SETTINGS = 2
   STATE_ROUND = 3
 
+  FORMAT_NONE = 0
+  FORMAT_SET = 1
+  FORMAT_SET_GOALSFIRST = 2
+  FORMAT_TABLE = 11
+
 
   @staticmethod
   def usage() :
@@ -139,6 +144,7 @@ class Macmahon :
 
   def __init__( self ) :
 
+    self.miFormat = Macmahon.FORMAT_NONE
     self.miState = Macmahon.STATE_NONE
     self.miRound = 0
 
@@ -342,7 +348,7 @@ class Macmahon :
     return liRet
 
 
-  def standings( self, bHeader = True ) :
+  def standings_short1( self, bHeader = True ) :
     if bHeader :
       print( "%-14s %s" % ( Macmahon.TAG_TEAMS, Score.gsHeaderShort1 ) )
       print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
@@ -350,6 +356,30 @@ class Macmahon :
       lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
       print( "%-14s %s" % ( lsTeam, lsRow ) )
 
+
+  def standings_set( self, bGoalsFirst = True ) :
+    for lsTeam in self.mTeams.mDict.keys() :
+      print( "----" )
+      print( lsTeam )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      if bGoalsFirst == True :
+        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusHalfSOS )
+      else :
+        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusHalfSOS )
+      print( lSet )
+
+
+  def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
+
+    if iFormat == Macmahon.FORMAT_NONE :
+      iFormat = self.miFormat
+
+    if iFormat == Macmahon.FORMAT_NONE or iFormat == Macmahon.FORMAT_TABLE :
+      self.standings_short1( bHeader = True )
+    elif iFormat == Macmahon.FORMAT_SET :
+      self.standings_set( bGoalsFirst = False )
+    elif iFormat == Macmahon.FORMAT_SET_GOALSFIRST :
+      self.standings_set()
 
 
   def readFile( self, sFile = None ) :
