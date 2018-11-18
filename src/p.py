@@ -420,6 +420,9 @@ class Macmahon :
       print( "%-14s %s" % ( Macmahon.TEXT_STATE_TEAMS, Score.gsHeaderShort1 ) )
       print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
     for lsTeam in self.mTeams.mListSortedTeams :
+      if self.miOptBye == Macmahon.BYE_IGNORE :
+        if lsTeam == Macmahon.TEXT_BYE :
+          continue
       lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
       print( "%-14s %s" % ( lsTeam, lsRow ) )
 
@@ -427,6 +430,9 @@ class Macmahon :
   def standings_set( self, bGoalsFirst = True ) :
 
     for lsTeam in self.mTeams.mListSortedTeams :
+      if self.miOptBye == Macmahon.BYE_IGNORE :
+        if lsTeam == Macmahon.TEXT_BYE :
+          continue
       print( "----" )
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
