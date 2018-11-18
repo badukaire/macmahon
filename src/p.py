@@ -3,11 +3,12 @@
 #:
 #: usage: python p.py [<options>] <file>
 #: options:
-#:   -f <file> : by now just reading a file
+#:   -f <file> : files to read (by now just reading a file)
+#:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
+#:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
+#:   -s <sort> : sort by: REGULAR (points/goal avg), HALFSOS (points+SOS/2)
 #:
-#: can be called from any folder, and can use wrapper script p.sh
-#:
-#: file contains accounting transactions with format ...
+#: file contains ...
 from __future__ import print_function
 
 import sys
@@ -112,17 +113,49 @@ class Macmahon :
   TEXT_STATE_TEAMS = "teams"
   TEXT_STATE_SETTINGS = "settings"
   TEXT_STATE_ROUND = "round"
-
   STATE_NONE = 0
   STATE_TEAMS = 1
   STATE_SETTINGS = 2
   STATE_ROUND = 3
 
+  OPT_FORMAT_SET = "SET"
+  OPT_FORMAT_SET_GOALSFIRST = "SET_GOALSFIRST"
+  OPT_FORMAT_TABLE = "TABLE"
   FORMAT_NONE = 0
   FORMAT_SET = 1
   FORMAT_SET_GOALSFIRST = 2
   FORMAT_TABLE = 11
 
+  OPT_BYE_IGNORE = "IGNORE"
+  OPT_BYE_DRAW = "DRAW"
+  OPT_BYE_WIN = "WIN"
+  BYE_NONE = 0
+  BYE_IGNORE = 1
+  BYE_DRAW = 2
+  BYE_WIN = 3
+
+  OPT_SORT_REGULAR = "REGULAR"
+  OPT_SORT_HALFSOS = "HALFSOS"
+  SORT_NONE = 0
+  SORT_REGULAR = 1
+  SORT_HALFSOS = 2
+
+  gOptDict_Format = {
+    OPT_FORMAT_SET : FORMAT_SET,
+    OPT_FORMAT_SET_GOALSFIRST : FORMAT_SET_GOALSFIRST,
+    OPT_FORMAT_TABLE : FORMAT_TABLE,
+  }
+
+  gOptDict_Bye = {
+    OPT_BYE_IGNORE : BYE_IGNORE,
+    OPT_BYE_DRAW : BYE_DRAW,
+    OPT_BYE_WIN : BYE_WIN,
+  }
+
+  gOptDict_Sort = {
+    OPT_SORT_REGULAR : SORT_REGULAR,
+    OPT_SORT_HALFSOS : SORT_HALFSOS,
+  }
 
   @staticmethod
   def usage() :
@@ -144,12 +177,14 @@ class Macmahon :
 
   def __init__( self ) :
 
-    self.miFormat = Macmahon.FORMAT_NONE
+    self.miOptFormat = Macmahon.FORMAT_NONE
+    self.miOptSort = Macmahon.SORT_NONE
+    self.miOptBye = Macmahon.BYE_NONE
+
     self.miState = Macmahon.STATE_NONE
     self.miRound = 0
 
     self.mTeams = Teams()
-    print( "size of self.mTeams=%d" % self.mTeams.size() )
 
 
 
@@ -372,7 +407,7 @@ class Macmahon :
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
     if iFormat == Macmahon.FORMAT_NONE :
-      iFormat = self.miFormat
+      iFormat = self.miOptFormat
 
     if iFormat == Macmahon.FORMAT_NONE or iFormat == Macmahon.FORMAT_TABLE :
       self.standings_short1( bHeader = True )
@@ -421,12 +456,11 @@ class Macmahon :
     lFile.close()
 
 
-  @staticmethod
-  def checkOptions( pListParams ) :
+  def checkOptions( self, pListParams ) :
 
-    print( "checkOptions, args:", pListParams )
+    #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:d:i:' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:d:b:s:' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -441,42 +475,48 @@ class Macmahon :
     #print( lList )
     lDateRange = None
     for lOpt in lOptList :
-      #print( 'lOpt :' + str( lOpt )
-      if lOpt[0] == '-d':
+      #print( 'lOpt :' + str( lOpt ) )
+      if lOpt[0] == '-d' :
         lsVal = lOpt[1]
-        lDateRange = Macmahon.parseDates( lsVal )
-        if lDateRange == None :
-          Macmahon.eprint( 'FATAL: Invalid date/date range' )
+        if lsVal not in Macmahon.gOptDict_Format.keys() :
+          print( "FATAL: wrong value '%s' for option '%s'" % ( lsVal, lOpt[0] ) )
           Macmahon.usage()
           sys.exit( 1 )
-        print( "date range: %s - %s" % ( lDateRange[ 0 ], lDateRange[ 1 ] ) )
-      if lOpt[0] == '-i':
+        else :
+          self.miOptFormat = Macmahon.gOptDict_Format[ lsVal ]
+          print( "option '%s' (format) : %s (%d)" % ( lOpt[0], lsVal, self.miOptFormat ) )
+      elif lOpt[0] == '-b' :
         lsVal = lOpt[1]
-        Macmahon.gsFileInitialBalance = lsVal
-        print( "initial balance file : %s" % Macmahon.gsFileInitialBalance )
-      if lOpt[0] == '-f':
+        if lsVal not in Macmahon.gOptDict_Bye.keys() :
+          print( "FATAL: wrong value '%s' for option '%s'" % ( lsVal, lOpt[0] ) )
+          Macmahon.usage()
+          sys.exit( 1 )
+        else :
+          self.miOptBye = Macmahon.gOptDict_Bye[ lsVal ]
+          print( "option '%s' (bye) : %s (%d)" % ( lOpt[0], lsVal, self.miOptBye ) )
+      elif lOpt[0] == '-s' :
+        lsVal = lOpt[1]
+        if lsVal not in Macmahon.gOptDict_Sort.keys() :
+          print( "FATAL: wrong value '%s' for option '%s'" % ( lsVal, lOpt[0] ) )
+          Macmahon.usage()
+          sys.exit( 1 )
+        else :
+          self.miOptSort = Macmahon.gOptDict_Sort[ lsVal ]
+          print( "option '%s' (sort) : %s (%d)" % ( lOpt[0], lsVal, self.miOptSort ) )
+      elif lOpt[0] == '-f':
         lsVal = lOpt[1]
         Macmahon.gsFile = lsVal
-        print( "file : %s" % Macmahon.gsFile )
-      if lOpt[0] == '-M':
-        lsVal = lOpt[1]
-        try :
-          liVal = int( lsVal )
-          self.miMaxDY = liVal
-        except :
-          Macmahon.eprint( 'FATAL: NON-numerical value for Max DY (Y diff)' )
-          Macmahon.usage()
-          sys.exit( 1 )
-          # TODO : only-1 exit point
+        print( "option '%s' (file) : %s" % ( lOpt[0], lsVal ) )
 
     Macmahon.gsFiles = lList
     Macmahon.gTupDateRange = lDateRange
 
 
+
 if __name__ == "__main__" :
 
-  Macmahon.checkOptions( sys.argv[ 1 : ] )
   lMacmahon = Macmahon()
+  lMacmahon.checkOptions( sys.argv[ 1 : ] )
   lMacmahon.readFile( Macmahon.gsFile )
 
   """
