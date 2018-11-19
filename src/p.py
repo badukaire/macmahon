@@ -14,9 +14,6 @@ from __future__ import print_function
 import sys
 import getopt
 
-# TODO : BYE should not be a team in the list, and there should be no teams named like that
-# TODO : use a special format for BYE
-
 # TODO : add option to compute up to a specified round
 # TODO : output result to a file (-o option)
 
@@ -67,6 +64,8 @@ class Teams :
 
 
   def initialize( self ) :
+
+    self.add( Macmahon.TEXT_BYE )
 
     self.mDict = dict()
     for lsTeam in self.mSet :
@@ -135,7 +134,7 @@ class Macmahon :
   LINE_MIN_LEN = 4
 
   TEXT_TEAM = "teams"
-  TEXT_BYE = "BYE"
+  TEXT_BYE = "[BYE]"
 
   TEXT_STATE_SETTINGS = "settings"
   TEXT_STATE_ROUND = "round"
@@ -271,9 +270,13 @@ class Macmahon :
   def parseLineTeam( self, sLine0 ) :
 
     lss = sLine0.split()
+    if lss[ 0 ] == Macmahon.TEXT_BYE :
+      print( "error team %s is not a valid name (it is added automatically)" % lss[ 0 ] )
+      sys.exit(1)
     print( "adding team %s" % lss[ 0 ] )
     if self.mTeams.add( lss[ 0 ] ) == 0 :
-      print( "error adding team %s, is it already added?" % lss[ 0 ] )
+      print( "error adding team %s, was it already added?" % lss[ 0 ] )
+      sys.exit(1)
     # TODO : add initial values
 
 
