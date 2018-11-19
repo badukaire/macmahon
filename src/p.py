@@ -8,6 +8,7 @@
 #:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
 #:   -s <sort> : sort by: REGULAR (points/goal avg), REGULARSOS (points/SOS,SOSOS), HALFSOS (points+SOS/2), SOS (SOS/SOSOS only)
+#:   -r <rounds> : number of league rounds
 #:
 #: file contains ...
 from __future__ import print_function
@@ -215,6 +216,7 @@ class Macmahon :
     self.miOptSort = Macmahon.SORT_NONE
     self.miOptBye = Macmahon.BYE_IGNORE
     self.msOptOutputfile = None
+    self.miOptRounds = 0
 
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
@@ -358,8 +360,9 @@ class Macmahon :
     liSososHome = lScoreAway.miSOSOS + liSosAway
     liSososAway = lScoreHome.miSOSOS + liSosHome
 
-    liPointSosHome = liPointsHome + liSosHome / 2
-    liPointSosAway = liPointsAway + liSosAway / 2
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liPointSosHome = liPointsHome + (liRounds - self.miRound) * liSosHome / liRounds
+    liPointSosAway = liPointsAway + (liRounds - self.miRound) * liSosAway / liRounds
 
     lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
     lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
@@ -468,6 +471,7 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
+    print("round %d / %d" % ( self.miRound, self.miOptRounds if self.miOptRounds > 0 else self.miRound ) )
     self.displayBye()
     self.mTeams.sort( self.miOptSort )
 
@@ -525,7 +529,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:d:b:s:o:' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:d:b:s:o:' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -568,6 +572,17 @@ class Macmahon :
         else :
           self.miOptSort = Macmahon.gOptDict_Sort[ lsVal ]
           print( "option '%s' (sort) : %s (%d)" % ( lOpt[0], lsVal, self.miOptSort ) )
+      elif lOpt[0] == '-r':
+        lsVal = lOpt[1]
+        print( "option '%s' (rounds) : %s" % ( lOpt[0], lsVal ) )
+        try :
+          self.miOptRounds = int( lsVal )
+        except :
+          print( "ERROR: %s not a valid number" %  lsVal )
+          sys.exit(1)
+        if self.miOptRounds < 2 or self.miOptRounds > 20 :
+          print( "ERROR: %d must have a value between 2 and 20" % self.miOptRounds )
+          sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
         Macmahon.gsFile = lsVal
