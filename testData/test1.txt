@@ -1,6 +1,4 @@
 
-:teams
-
 # optionally a set of 6 figures colon-separated means initial points:
 # points, SOS, SOSOS, SODOS, goals scored/received
 # this can be used for initial macmahon or as standings after last round
