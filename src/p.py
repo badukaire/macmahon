@@ -136,7 +136,7 @@ class Macmahon :
 
   LINE_MIN_LEN = 4
 
-  TEXT_TEAM = "teams"
+  TEXT_TEAM = "team"
   TEXT_BYE = "[BYE]"
 
   TEXT_STATE_SETTINGS = "settings"
