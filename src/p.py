@@ -205,9 +205,9 @@ class Macmahon :
 
   def __init__( self ) :
 
-    self.miOptFormat = Macmahon.FORMAT_NONE
+    self.miOptFormat = Macmahon.FORMAT_TABLE
     self.miOptSort = Macmahon.SORT_NONE
-    self.miOptBye = Macmahon.BYE_NONE
+    self.miOptBye = Macmahon.BYE_IGNORE
 
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
@@ -454,6 +454,8 @@ class Macmahon :
       ls = Macmahon.OPT_BYE_DRAW
     elif self.miOptBye == Macmahon.BYE_WIN :
       ls = Macmahon.OPT_BYE_WIN
+    else :
+      ls = "(none)"
     print( "bye treatment: %s" % ls )
 
 
