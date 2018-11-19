@@ -4,6 +4,7 @@
 #: usage: python p.py [<options>] <file>
 #: options:
 #:   -f <file> : files to read (by now just reading a file)
+#:   -o <output file> : output file where the final table is sent
 #:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
 #:   -s <sort> : sort by: REGULAR (points/goal avg), REGULARSOS (points/SOS,SOSOS), HALFSOS (points+SOS/2)
@@ -15,7 +16,6 @@ import sys
 import getopt
 
 # TODO : add option to compute up to a specified round
-# TODO : output result to a file (-o option)
 
 class Score :
 
@@ -208,6 +208,7 @@ class Macmahon :
     self.miOptFormat = Macmahon.FORMAT_TABLE
     self.miOptSort = Macmahon.SORT_NONE
     self.miOptBye = Macmahon.BYE_IGNORE
+    self.msOptOutputfile = None
 
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
@@ -518,7 +519,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:d:b:s:' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:d:b:s:o:' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -565,6 +566,10 @@ class Macmahon :
         lsVal = lOpt[1]
         Macmahon.gsFile = lsVal
         print( "option '%s' (file) : %s" % ( lOpt[0], lsVal ) )
+      elif lOpt[0] == '-o':
+        lsVal = lOpt[1]
+        self.msOptOutputfile = lsVal
+        print( "option '%s' (output file) : %s" % ( lOpt[0], lsVal ) )
 
     Macmahon.gsFiles = lList
     Macmahon.gTupDateRange = lDateRange
@@ -589,4 +594,14 @@ if __name__ == "__main__" :
   """
 
   lMacmahon.standings()
+
+  if not lMacmahon.msOptOutputfile == None :
+    print("--")
+    print("redirecting stdout to %s" % lMacmahon.msOptOutputfile )
+    oldStdout = sys.stdout
+    sys.stdout = open( lMacmahon.msOptOutputfile, "w" )
+    lMacmahon.standings()
+    sys.stdout.close()
+    sys.stdout = oldStdout
+    print("restored stdout")
 
