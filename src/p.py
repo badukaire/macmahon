@@ -443,8 +443,20 @@ class Macmahon :
       print( lSet )
 
 
+  def displayBye( self ) :
+
+    if self.miOptBye == Macmahon.BYE_IGNORE :
+      ls = Macmahon.OPT_BYE_IGNORE
+    elif self.miOptBye == Macmahon.BYE_DRAW :
+      ls = Macmahon.OPT_BYE_DRAW
+    elif self.miOptBye == Macmahon.BYE_WIN :
+      ls = Macmahon.OPT_BYE_WIN
+    print( "bye treatment: %s" % ls )
+
+
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
+    self.displayBye()
     self.mTeams.sort( self.miOptSort )
 
     if iFormat == Macmahon.FORMAT_NONE :
