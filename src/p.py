@@ -14,12 +14,8 @@ from __future__ import print_function
 import sys
 import getopt
 
-# TODO : BYE should not be a team in the list, and there should be no teams named like that
-# TODO : use a special format for BYE
-
 # TODO : add option to compute up to a specified round
 # TODO : output result to a file (-o option)
-
 
 class Score :
 
@@ -68,6 +64,8 @@ class Teams :
 
 
   def initialize( self ) :
+
+    self.add( Macmahon.TEXT_BYE )
 
     self.mDict = dict()
     for lsTeam in self.mSet :
@@ -135,9 +133,9 @@ class Macmahon :
 
   LINE_MIN_LEN = 4
 
-  TEXT_BYE = "BYE"
+  TEXT_TEAM = "teams"
+  TEXT_BYE = "[BYE]"
 
-  TEXT_STATE_TEAMS = "teams"
   TEXT_STATE_SETTINGS = "settings"
   TEXT_STATE_ROUND = "round"
   STATE_NONE = 0
@@ -211,7 +209,7 @@ class Macmahon :
     self.miOptSort = Macmahon.SORT_NONE
     self.miOptBye = Macmahon.BYE_NONE
 
-    self.miState = Macmahon.STATE_NONE
+    self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
 
     self.mTeams = Teams()
@@ -231,12 +229,9 @@ class Macmahon :
 
     liState = self.miState
     liError = 0 # OK
-    if iState == Macmahon.STATE_TEAMS :
-      if self.miState == Macmahon.STATE_NONE :
-        self.miState = iState
 
-    elif iState == Macmahon.STATE_SETTINGS :
-      if self.miState == Macmahon.STATE_NONE or self.miState == Macmahon.STATE_TEAMS :
+    if iState == Macmahon.STATE_SETTINGS :
+      if self.miState == Macmahon.STATE_TEAMS :
         self.miState = iState
 
     elif iState == Macmahon.STATE_ROUND :
@@ -275,9 +270,13 @@ class Macmahon :
   def parseLineTeam( self, sLine0 ) :
 
     lss = sLine0.split()
+    if lss[ 0 ] == Macmahon.TEXT_BYE :
+      print( "error team %s is not a valid name (it is added automatically)" % lss[ 0 ] )
+      sys.exit(1)
     print( "adding team %s" % lss[ 0 ] )
     if self.mTeams.add( lss[ 0 ] ) == 0 :
-      print( "error adding team %s, is it already added?" % lss[ 0 ] )
+      print( "error adding team %s, was it already added?" % lss[ 0 ] )
+      sys.exit(1)
     # TODO : add initial values
 
 
@@ -395,9 +394,7 @@ class Macmahon :
       lsL = sLine0[ : -1 ] # -2, assuming windows fileformat
       if lsL[ 0 ] == ":" : # tag line
         lss = lsL[ 1 : ].split()
-        if lss[ 0 ] == Macmahon.TEXT_STATE_TEAMS :
-          lbState = self.state( Macmahon.STATE_TEAMS )
-        elif lss[ 0 ] == Macmahon.TEXT_STATE_SETTINGS :
+        if lss[ 0 ] == Macmahon.TEXT_STATE_SETTINGS :
           lbState = self.state( Macmahon.STATE_SETTINGS )
         elif lss[ 0 ] == Macmahon.TEXT_STATE_ROUND :
           lbState = self.state( Macmahon.STATE_ROUND )
@@ -423,7 +420,7 @@ class Macmahon :
   def standings_short1( self, bHeader = True ) :
 
     if bHeader :
-      print( "%-14s %s" % ( Macmahon.TEXT_STATE_TEAMS, Score.gsHeaderShort1 ) )
+      print( "%-14s %s" % ( Macmahon.TEXT_TEAM, Score.gsHeaderShort1 ) )
       print( "%s %s"    % ( "-" * 14, Score.gsSepHdrShort1 ) )
     for lsTeam in self.mTeams.mListSortedTeams :
       if self.miOptBye == Macmahon.BYE_IGNORE :
