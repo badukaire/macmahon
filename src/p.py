@@ -7,7 +7,11 @@
 #:   -o <output file> : output file where the final table is sent
 #:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-#:   -s <sort> : sort by: REGULAR (points/goal avg), REGULARSOS (points/SOS,SOSOS), HALFSOS (points+SOS/2), SOS (SOS/SOSOS only)
+#:   -s <sort> : sort by one of (commas indicate tiebreakers):
+#:     * REGULAR : points, goal avg
+#:     * REGULARSOS : points, SOS, SOSOS
+#:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
+#:     * SOS : SOS/SOSOS, points
 #:   -r <rounds> : number of league rounds
 #:
 #: file contains ...
