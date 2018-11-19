@@ -20,7 +20,7 @@ import getopt
 
 class Score :
 
-  gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS"
+  gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS"
   gsSepHdrShort1 = "------|------------------|-----------|------"
   gsFormatShort1 = "%2d %2d | %3d - %3d = %3d  | %4d %4d | %3d"
 
@@ -115,8 +115,8 @@ class Teams :
     elif iOptSort == Macmahon.SORT_REGULARSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_REGULARSOS )
       self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miSOS, self.mDict[ team ].miSOSOS ), reverse = True )
-    elif iOptSort == Macmahon.SORT_HALFSOS :
-      print( "sorting by: %s" % Macmahon.OPT_SORT_HALFSOS )
+    elif iOptSort == Macmahon.SORT_WSOS :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_WSOS )
       self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPointsPlusHalfSOS, self.mDict[ team ].miPoints ), reverse = True )
     elif iOptSort == Macmahon.SORT_SOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_SOS )
@@ -165,12 +165,12 @@ class Macmahon :
 
   OPT_SORT_REGULAR = "REGULAR"
   OPT_SORT_REGULARSOS = "REGULARSOS"
-  OPT_SORT_HALFSOS = "HALFSOS"
+  OPT_SORT_WSOS = "WSOS"
   OPT_SORT_SOS = "SOS"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
-  SORT_HALFSOS = 3
+  SORT_WSOS = 3
   SORT_SOS = 4
 
   gOptDict_Format = {
@@ -188,7 +188,7 @@ class Macmahon :
   gOptDict_Sort = {
     OPT_SORT_REGULAR : SORT_REGULAR,
     OPT_SORT_REGULARSOS : SORT_REGULARSOS,
-    OPT_SORT_HALFSOS : SORT_HALFSOS,
+    OPT_SORT_WSOS : SORT_WSOS,
     OPT_SORT_SOS : SORT_SOS,
   }
 
