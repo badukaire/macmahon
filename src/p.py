@@ -388,7 +388,7 @@ class Macmahon :
     if liLen <= 1 : pass # OK, empty or comment line
     elif liLen < Macmahon.LINE_MIN_LEN :
       # TODO : use error method
-      print( "line lenght %d not enough, minimum %d" % ( liLen, Acct.W_BAL_LINE ) )
+      print( "line lenght %d not enough, minimum %d" % ( liLen, Macmahon.LINE_MIN_LEN ) )
       liRet = 1
     else : # now a real line
       lsL = sLine0[ : -1 ] # -2, assuming windows fileformat
