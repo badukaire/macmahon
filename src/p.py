@@ -14,6 +14,12 @@ from __future__ import print_function
 import sys
 import getopt
 
+# TODO : BYE should not be a team in the list, and there should be no teams named like that
+# TODO : use a special format for BYE
+
+# TODO : add option to compute up to a specified round
+# TODO : output result to a file (-o option)
+
 
 class Score :
 
