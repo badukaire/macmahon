@@ -5,6 +5,7 @@
 #: options:
 #:   -f <file> : files to read (by now just reading a file)
 #:   -o <output file> : output file where the final table is sent
+#:   -O : same as -o but the name is assigned automatically based on the options given
 #:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
 #:   -s <sort> : sort by one of (commas indicate tiebreakers):
@@ -222,6 +223,7 @@ class Macmahon :
     self.miOptBye = Macmahon.BYE_IGNORE
     self.msFile = None
     self.msOptOutputfile = None
+    self.mbOptOutputfileAuto = False
     self.miOptRounds = 0
 
     self.miWeightedSOS = -1
@@ -542,7 +544,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:d:b:s:o:' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:d:b:s:o:O' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -606,6 +608,14 @@ class Macmahon :
         lsVal = lOpt[1]
         self.msOptOutputfile = lsVal
         print( "option '%s' (output file) : %s" % ( lOpt[0], lsVal ) )
+      elif lOpt[0] == '-O':
+        self.mbOptOutputfileAuto = True
+        print( "option '%s' (autonamed output file) set" % lOpt[0] )
+
+    if self.mbOptOutputfileAuto and not self.msOptOutputfile == None :
+      print( "ERROR: options '-o' and '-O' are mutually incompatible" )
+      Macmahon.usage()
+      sys.exit( 1 )
 
     Macmahon.msFiles = lList
     Macmahon.gTupDateRange = lDateRange
