@@ -501,6 +501,37 @@ class Macmahon :
       self.standings_set()
 
 
+  def setAutoOutputfile( self ) :
+
+    if self.msFile == None :
+      lsName = "STDIN"
+    else :
+      lsName = self.msFile.split("/")[-1] # remove directories
+      lsName = lsName.split(".")[0] # remove extension
+    lsName += "_"
+    lsName += "RAW_" if not self.miOptFormat == Macmahon.FORMAT_TABLE else ""
+    if self.miOptSort == Macmahon.SORT_NONE :
+      lsName += "unsorted_"
+    elif self.miOptSort == Macmahon.SORT_REGULAR :
+      lsName += "sortRegular_"
+    elif self.miOptSort == Macmahon.SORT_REGULARSOS :
+      lsName += "sortRegularSOS_"
+    elif self.miOptSort == Macmahon.SORT_WSOS :
+      lsName += "sortWeightedSOS_"
+    elif self.miOptSort == Macmahon.SORT_SOS :
+      lsName += "sortSOS_"
+    if self.miOptBye == Macmahon.BYE_IGNORE :
+      lsName += "byeIgnore_"
+    if self.miOptBye == Macmahon.BYE_DRAW :
+      lsName += "byeDraw_"
+    if self.miOptBye == Macmahon.BYE_WIN :
+      lsName += "byeWin_"
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    lsName += "r%d_%d" % ( self.miRound, liRounds )
+    lsName += ".txt"
+    lMacmahon.msOptOutputfile = lsName
+
+
   def readFile( self ) :
     if self.msFile == None :
       self.mFile = sys.stdin
@@ -641,6 +672,9 @@ if __name__ == "__main__" :
   """
 
   lMacmahon.standings()
+
+  if lMacmahon.mbOptOutputfileAuto :
+    lMacmahon.setAutoOutputfile()
 
   if not lMacmahon.msOptOutputfile == None :
     print("--")
