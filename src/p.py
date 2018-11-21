@@ -15,6 +15,7 @@
 #:     * SOS : SOS/SOSOS, points
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
+#:   -c <round #> : count up to round #
 #:
 #: file contains ...
 from __future__ import print_function
@@ -22,10 +23,8 @@ from __future__ import print_function
 import sys
 import getopt
 
-# TODO : add option to compute up to a specified round
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
-# TODO : display position?
 
 class Score :
 
@@ -262,6 +261,7 @@ class Macmahon :
     self.msOptOutputfile = None
     self.mbOptOutputfileAuto = False
     self.miOptRounds = 0
+    self.miOptCountRound = 0
 
     self.miWeightedSOS = -1
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
@@ -295,8 +295,6 @@ class Macmahon :
 
         self.standings()
         self.miRound += 1
-        #if self.miRound == 3 :
-        #  sys.exit(0)
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
       self.mTeams.initialize()
@@ -563,7 +561,10 @@ class Macmahon :
       lsName = self.msFile.split("/")[-1] # remove directories
       lsName = lsName.split(".")[0] # remove extension
     lsName += "_"
-    lsName += "RAW_" if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+    if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
+      lsName += "RAW_"
+    else :
+      lsName = "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
     elif self.miOptSort == Macmahon.SORT_REGULAR :
@@ -604,6 +605,10 @@ class Macmahon :
     for lsLine in self.mFile :
       liLines += 1
       liErrors += self.parseLine( lsLine )
+      if not self.miOptCountRound == 0 and self.miRound > self.miOptCountRound :
+        print( "reached max round count %d, stopping .." % self.miOptCountRound )
+        self.miRound -= 1
+        break
     print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
       self.mFile.close()
@@ -629,7 +634,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:d:b:s:o:O' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:O' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -684,6 +689,17 @@ class Macmahon :
           sys.exit(1)
         if self.miOptRounds < 2 or self.miOptRounds > 20 :
           print( "ERROR: %d must have a value between 2 and 20" % self.miOptRounds )
+          sys.exit(1)
+      elif lOpt[0] == '-c':
+        lsVal = lOpt[1]
+        print( "option '%s' (count up to round #) : %s" % ( lOpt[0], lsVal ) )
+        try :
+          self.miOptCountRound = int( lsVal )
+        except :
+          print( "ERROR: %s not a valid number" %  lsVal )
+          sys.exit(1)
+        if self.miOptCountRound < 1 or self.miOptCountRound > 20 :
+          print( "ERROR: %d must have a value between 2 and 20" % self.miOptCountRound )
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
