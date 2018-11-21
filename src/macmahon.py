@@ -13,6 +13,7 @@
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
+#:     * SOSOS : SOSOS/SOS, points
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
@@ -160,6 +161,17 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
+    elif iOptSort == Macmahon.SORT_SOSOS :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_SOSOS )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miSOSOS,
+          self.mDict[ team ].miSOS,
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
+        ),
+        reverse = True )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
@@ -208,11 +220,13 @@ class Macmahon :
   OPT_SORT_REGULARSOS = "REGULARSOS"
   OPT_SORT_WSOS = "WSOS"
   OPT_SORT_SOS = "SOS"
+  OPT_SORT_SOSOS = "SOSOS"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
   SORT_WSOS = 3
   SORT_SOS = 4
+  SORT_SOSOS = 5
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -232,6 +246,7 @@ class Macmahon :
     OPT_SORT_REGULARSOS : SORT_REGULARSOS,
     OPT_SORT_WSOS : SORT_WSOS,
     OPT_SORT_SOS : SORT_SOS,
+    OPT_SORT_SOSOS : SORT_SOSOS,
   }
 
   @staticmethod
@@ -575,6 +590,8 @@ class Macmahon :
       lsName += "sortWeightedSOS_"
     elif self.miOptSort == Macmahon.SORT_SOS :
       lsName += "sortSOS_"
+    elif self.miOptSort == Macmahon.SORT_SOSOS :
+      lsName += "sortSOSOS_"
     if self.miOptBye == Macmahon.BYE_IGNORE :
       lsName += "byeIgnore_"
     if self.miOptBye == Macmahon.BYE_DRAW :
