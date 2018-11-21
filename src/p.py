@@ -23,6 +23,9 @@ import sys
 import getopt
 
 # TODO : add option to compute up to a specified round
+# TODO : use log print / error wrappers
+# TODO : add option for being silent (using the log wrappers)
+# TODO : display position?
 
 class Score :
 
