@@ -9,14 +9,15 @@ This may be useful to know, when not all games in sport leagues have been played
 The script allows several options for computing the ratings:
 
 - bye treatment: the byes can be treated as a LOSS/NOT-PLAYED/IGNORED, DRAW (a draw is awarded) and a WIN (a win is awarded).
-- sorting criteria: so far there are 3 possible options: REGULAR (ignoring MacMahon stuff), REGULARSOS (same as REGULAR but Macmahon's SOS is a tiebreaker) and HALFSOS (the score is the points + half the SOS). This last one seems to be a good method but I have no demonstration to prove that, if you know of a better way let me know.
+- sorting criteria: so far there are 3 possible options: REGULAR (ignoring MacMahon stuff), REGULARSOS (same as REGULAR but Macmahon's SOS is a tiebreaker) and WSOS (the score is the points + the weighted SOS).
 
 The input is a file with a list of the teams and the matches results, separated by rounds. See example in section _input_. And the output is a table with the games played, points, goals (scored, received, average), SOS, SOSOS and PhSOS (points + SOS/2). See example here (sorted by the REGULAR criterium):
 
 ```
+round 4 / 16  => w (weighted SOS) = 75% -- PwSOS = P + w * SOS
 bye treatment: IGNORE
 sorting by: REGULAR
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS
+teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
 -------------- ------|------------------|-----------|------
 junior          4 12 |  20 -   1 =  19  |   14   37 |  19
 polo            4 10 |  32 -   5 =  27  |    3   20 |  11
@@ -28,6 +29,25 @@ castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
 linia22         4  0 |   4 -  27 = -23  |   12   19 |   6
 iluro           3  0 |   2 -  26 = -24  |   17   16 |   8
 ```
+
+## concepts
+
+The MacMahon scoring system was invented by Lee MacMahon for improving the quality of standings in go tournaments where it was not possible to play a full round-robin tournament. For that, it used the players rank as a base for the score, and also concepts such as SOS, SOSOS and SOSOS as tiebreakers.
+
+In competitions where a league is played, at the end these scores are not useful, but in the early rounds it can be useful to know which teams have lower or greater potential. This is achieved by considering the SOS.
+
+The SOS (Sum of Opponents Scores) is the sum of points of all the opponents a team (or player) has played.
+
+A example is useful to understand it and how it is useful: If in round 2 of a league there is a team A with (4 points) has played against team B (with 2 points) and team C (with 5 points), team A's SOS will be 2 + 5 = 7. Then if there is a team F (also with 4 points as team A) which has played against team G (with 1 point) and team H (with 0 points), its SOS will be 1 + 0 = 1.
+
+In this example, both teams A and F have 4 points. This means they both probably have 1 win and 1 draw. But it is quite obvious that team A's 4 points are more valuable that team F's 4 points, because these points have been achieved against stronger teams.
+
+Another possibility is that team F has a better goal average than team A, because it has played against weaker teams. The SOS is in during earlier rounds a better indicator than the goal average of a team potential. At the end of the league, since all the teams will have the same SOS (all have played against each other), and then the goal average is a good tiebreaker.
+
+The SOSOS is the sum of SOS of all the opponents of a given team. It is useful in case 2 teams have the same SOS. The SODOS is another tiebreaker that may be useful here only if the number of rounds is very small. It is the Sum of SOS of all the defeated opponents.
+
+Finally this program includes a new concept: the PwSOS, or points + weighted SOS. It consists of the points plus the SOS, weighted by the number or remaining rounds. This means that in the first rounds it has a higher weight, and it is not considered in the last round. Actually, as it has already been said, in the last round all teams have the same SOS, therefore it makes no sense to consider it.
+
 
 # options
 
@@ -49,7 +69,7 @@ Which yields the following table:
 ```
 bye treatment: IGNORE
 sorting by: REGULARSOS
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS
+teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
 -------------- ------|------------------|-----------|------
 junior          4 12 |  20 -   1 =  19  |   14   37 |  19
 athc            4 10 |  18 -   2 =  16  |   15   31 |  17
@@ -63,16 +83,16 @@ castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
 ```
 This changes something, but not much: Only 2 pairs of teams which were tied by points get their standings reverted. Which makes sense since you would score more goals to a weaker team. In other words, teams who score more is because have played against weaker teams.
 
-And now, this command sorts by _points + SOS/2_ (option `-b HALFSOS`):
+And now, this command sorts by _points + SOS/2_ (option `-b WSOS`):
 
 ```bash
-python p.py -f ..\testData\test1.txt -d TABLE -s HALFSOS -b IGNORE
+python p.py -f ..\testData\test1.txt -d TABLE -s WSOS -b IGNORE
 ```
 Which yields the following table, where it can be seen that many things have changed:
 ```
 bye treatment: IGNORE
-sorting by: HALFSOS
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PhSOS
+sorting by: WSOS
+teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
 -------------- ------|------------------|-----------|------
 junior          4 12 |  20 -   1 =  19  |   14   37 |  19
 athc            4 10 |  18 -   2 =  16  |   15   31 |  17
