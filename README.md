@@ -51,9 +51,24 @@ Finally this program includes a new concept: the PwSOS, or points + weighted SOS
 
 # options
 
-The script accepts several command line options
+The script accepts several command line options. Copying from the script:
 
-TODO describe options
+```
+  -f <file> : files to read (by now just reading a file)
+  -o <output file> : output file where the final table is sent
+  -O : same as -o but the name is assigned automatically based on the options given
+  -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
+  -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
+  -s <sort> : sort by one of (commas indicate tiebreakers):
+    * REGULAR : points, goal avg
+    * REGULARSOS : points, SOS, SOSOS
+    * WSOS : weighted SOS = points + SOS/remaining rounds, points
+    * SOS : SOS/SOSOS, points
+  -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
+                rounds, and WSOS does not matter (weights 0.00% in the last round)
+  -c <round #> : count up to round #
+```
+
 
 ## examples
 
