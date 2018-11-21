@@ -215,6 +215,7 @@ class Macmahon :
     self.miOptFormat = Macmahon.FORMAT_TABLE
     self.miOptSort = Macmahon.SORT_NONE
     self.miOptBye = Macmahon.BYE_IGNORE
+    self.msFile = None
     self.msOptOutputfile = None
     self.miOptRounds = 0
 
@@ -486,16 +487,16 @@ class Macmahon :
       self.standings_set()
 
 
-  def readFile( self, sFile = None ) :
-    if sFile == None :
+  def readFile( self ) :
+    if self.msFile == None :
       self.mFile = sys.stdin
       print( "reading from stdin" )
     else :
-      print( "reading from file %s" % sFile )
+      print( "reading from file %s" % self.msFile )
       try :
-        self.mFile = open( sFile )
+        self.mFile = open( self.msFile )
       except :
-        print( "FATAL, could not open file " + sFile )
+        print( "FATAL, could not open file " + msFile )
         sys.exit( 1 )
 
     liLines = 0
@@ -504,8 +505,8 @@ class Macmahon :
     for lsLine in self.mFile :
       liLines += 1
       liErrors += self.parseLine( lsLine )
-    print( "file processed, lines=%d, lines with errors: %d" % ( liLines, liErrors ) )
-    if not sFile == None :
+    print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
+    if not self.msFile == None :
       self.mFile.close()
 
 
@@ -539,7 +540,9 @@ class Macmahon :
 
     # TODO : use shift / setenv --
 
-    Macmahon.gsFileInitialBalance = None
+    """
+    Macmahon.msFileInitialBalance = None
+    """
     #print( lOptList )
     #print( lList )
     lDateRange = None
@@ -585,15 +588,16 @@ class Macmahon :
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
-        Macmahon.gsFile = lsVal
+        Macmahon.msFile = lsVal
         print( "option '%s' (file) : %s" % ( lOpt[0], lsVal ) )
       elif lOpt[0] == '-o':
         lsVal = lOpt[1]
         self.msOptOutputfile = lsVal
         print( "option '%s' (output file) : %s" % ( lOpt[0], lsVal ) )
 
-    Macmahon.gsFiles = lList
+    Macmahon.msFiles = lList
     Macmahon.gTupDateRange = lDateRange
+
 
 
 
@@ -601,16 +605,16 @@ if __name__ == "__main__" :
 
   lMacmahon = Macmahon()
   lMacmahon.checkOptions( sys.argv[ 1 : ] )
-  lMacmahon.readFile( Macmahon.gsFile )
+  lMacmahon.readFile()
 
   """
-  if not Macmahon.gsFileInitialBalance == None :
-    lMacmahon.readBalance( Macmahon.gsFileInitialBalance )
-  if len( Macmahon.gsFiles ) == 0 :
+  if not lMacmahon.msFileInitialBalance == None :
+    lMacmahon.readBalance( lMacmahon.msFileInitialBalance )
+  if len( lMacmahon.msFiles ) == 0 :
     # use stdin
     lMacmahon.readMovs()
   else :
-    for lsFile in Macmahon.gsFiles :
+    for lsFile in lMacmahon.msFiles :
       lMacmahon.readMovs( lsFile )
   """
 
