@@ -120,16 +120,42 @@ class Teams :
 
     if iOptSort == Macmahon.SORT_REGULAR :
       print( "sorting by: %s" % Macmahon.OPT_SORT_REGULAR )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv ), reverse = True )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv
+        ),
+        reverse = True )
     elif iOptSort == Macmahon.SORT_REGULARSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_REGULARSOS )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPoints, self.mDict[ team ].miSOS, self.mDict[ team ].miSOSOS ), reverse = True )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miSOS,
+          self.mDict[ team ].miSOSOS
+        ),
+        reverse = True )
     elif iOptSort == Macmahon.SORT_WSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_WSOS )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miPointsPlusHalfSOS, self.mDict[ team ].miPoints ), reverse = True )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miPointsPlusHalfSOS,
+          self.mDict[ team ].miPoints
+        ),
+        reverse = True )
     elif iOptSort == Macmahon.SORT_SOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_SOS )
-      self.mListSortedTeams = sorted( self.mDict, key = lambda team : ( self.mDict[ team ].miSOS, self.mDict[ team ].miSOSOS, self.mDict[ team ].miPoints ), reverse = True )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miSOS,
+          self.mDict[ team ].miSOSOS,
+          self.mDict[ team ].miPoints
+        ),
+        reverse = True )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
