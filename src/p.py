@@ -400,7 +400,8 @@ class Macmahon :
     elif liLen < Macmahon.LINE_MIN_LEN :
       # TODO : use error method
       #print( "line lenght %d not enough, minimum %d including 2 EOL chars" % ( liLen, Macmahon.LINE_MIN_LEN ) )
-      liRet = 1
+      #liRet = 1
+      pass
     else : # now a real line
       lsL = sLine0[ : -1 ] # -2, assuming windows fileformat
       if lsL[ 0 ] == ":" : # tag line
