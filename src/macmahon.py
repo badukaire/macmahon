@@ -29,9 +29,9 @@ import getopt
 
 class Score :
 
-  gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS"
-  gsSepHdrShort1 = "------|------------------|-----------|------"
-  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d  | %4d %4d | %3d"
+  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS"
+  gsSepHdrShort1 = "------|-----------------|-----------|------"
+  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d"
 
 
   def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
