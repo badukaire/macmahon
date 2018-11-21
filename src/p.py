@@ -12,7 +12,8 @@
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
-#:   -r <rounds> : number of league rounds
+#:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
+#:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:
 #: file contains ...
 from __future__ import print_function
@@ -223,6 +224,7 @@ class Macmahon :
     self.msOptOutputfile = None
     self.miOptRounds = 0
 
+    self.miWeightedSOS = -1
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
 
@@ -368,6 +370,7 @@ class Macmahon :
     liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
     liPointSosHome = liPointsHome + (liRounds - self.miRound) * liSosHome / liRounds
     liPointSosAway = liPointsAway + (liRounds - self.miRound) * liSosAway / liRounds
+    self.miWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
 
     lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
     lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
@@ -477,7 +480,11 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
-    print("round %d / %d" % ( self.miRound, self.miOptRounds if self.miOptRounds > 0 else self.miRound ) )
+    print("round %d / %d  => w (weighted SOS) = %d%% -- PwSOS = P + w * SOS" % (
+      self.miRound,
+      self.miOptRounds if self.miOptRounds > 0 else self.miRound,
+      self.miWeightedSOS )
+    )
     self.displayBye()
     self.mTeams.sort( self.miOptSort )
 
