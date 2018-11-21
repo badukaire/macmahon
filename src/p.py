@@ -6,7 +6,7 @@
 #:   -f <file> : files to read (by now just reading a file)
 #:   -o <output file> : output file where the final table is sent
 #:   -O : same as -o but the name is assigned automatically based on the options given
-#:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
+#:   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
 #:   -s <sort> : sort by one of (commas indicate tiebreakers):
 #:     * REGULAR : points, goal avg
@@ -190,10 +190,12 @@ class Macmahon :
   OPT_FORMAT_SET = "SET"
   OPT_FORMAT_SET_GOALSFIRST = "SET_GOALSFIRST"
   OPT_FORMAT_TABLE = "TABLE"
+  OPT_FORMAT_TABLE_POS = "TABLE_POS"
   FORMAT_NONE = 0
   FORMAT_SET = 1
   FORMAT_SET_GOALSFIRST = 2
   FORMAT_TABLE = 11
+  FORMAT_TABLE_POS = 12
 
   OPT_BYE_IGNORE = "IGNORE"
   OPT_BYE_DRAW = "DRAW"
@@ -217,6 +219,7 @@ class Macmahon :
     OPT_FORMAT_SET : FORMAT_SET,
     OPT_FORMAT_SET_GOALSFIRST : FORMAT_SET_GOALSFIRST,
     OPT_FORMAT_TABLE : FORMAT_TABLE,
+    OPT_FORMAT_TABLE_POS : FORMAT_TABLE_POS,
   }
 
   gOptDict_Bye = {
@@ -485,6 +488,21 @@ class Macmahon :
       print( "%-14s %s" % ( lsTeam, lsRow ) )
 
 
+  def standings_short2( self, bHeader = True ) :
+
+    if bHeader :
+      print( "pl %-14s %s" % ( Macmahon.TEXT_TEAM, Score.gsHeaderShort1 ) )
+      print( "%s %s"    % ( "-" * 17, Score.gsSepHdrShort1 ) )
+    liPos = 0
+    for lsTeam in self.mTeams.mListSortedTeams :
+      liPos += 1
+      if self.miOptBye == Macmahon.BYE_IGNORE :
+        if lsTeam == Macmahon.TEXT_BYE :
+          continue
+      lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
+      print( "%2d %-14s %s" % ( liPos, lsTeam, lsRow ) )
+
+
   def standings_set( self, bGoalsFirst = True ) :
 
     for lsTeam in self.mTeams.mListSortedTeams :
@@ -529,6 +547,8 @@ class Macmahon :
 
     if iFormat == Macmahon.FORMAT_NONE or iFormat == Macmahon.FORMAT_TABLE :
       self.standings_short1( bHeader = True )
+    if iFormat == Macmahon.FORMAT_TABLE_POS :
+      self.standings_short2( bHeader = True )
     elif iFormat == Macmahon.FORMAT_SET :
       self.standings_set( bGoalsFirst = False )
     elif iFormat == Macmahon.FORMAT_SET_GOALSFIRST :
@@ -543,7 +563,7 @@ class Macmahon :
       lsName = self.msFile.split("/")[-1] # remove directories
       lsName = lsName.split(".")[0] # remove extension
     lsName += "_"
-    lsName += "RAW_" if not self.miOptFormat == Macmahon.FORMAT_TABLE else ""
+    lsName += "RAW_" if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
     elif self.miOptSort == Macmahon.SORT_REGULAR :
