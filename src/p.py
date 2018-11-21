@@ -588,7 +588,7 @@ class Macmahon :
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
-        Macmahon.msFile = lsVal
+        self.msFile = lsVal
         print( "option '%s' (file) : %s" % ( lOpt[0], lsVal ) )
       elif lOpt[0] == '-o':
         lsVal = lOpt[1]
