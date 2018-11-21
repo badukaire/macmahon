@@ -124,7 +124,7 @@ class Teams :
         self.mDict,
         key = lambda team : (
           self.mDict[ team ].miPoints,
-          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
     elif iOptSort == Macmahon.SORT_REGULARSOS :
@@ -134,7 +134,8 @@ class Teams :
         key = lambda team : (
           self.mDict[ team ].miPoints,
           self.mDict[ team ].miSOS,
-          self.mDict[ team ].miSOSOS
+          self.mDict[ team ].miSOSOS,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
     elif iOptSort == Macmahon.SORT_WSOS :
@@ -143,7 +144,10 @@ class Teams :
         self.mDict,
         key = lambda team : (
           self.mDict[ team ].miPointsPlusWeightedSOS,
-          self.mDict[ team ].miPoints
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miSOS,
+          self.mDict[ team ].miSOSOS,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
     elif iOptSort == Macmahon.SORT_SOS :
@@ -153,7 +157,8 @@ class Teams :
         key = lambda team : (
           self.mDict[ team ].miSOS,
           self.mDict[ team ].miSOSOS,
-          self.mDict[ team ].miPoints
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
     else : # unsorted
