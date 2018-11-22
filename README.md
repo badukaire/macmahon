@@ -54,6 +54,7 @@ Finally this program includes a new concept: the PwSOS, or points + weighted SOS
 The script accepts several command line options. Copying from the script:
 
 ```
+  -h : help, displays this information
   -f <file> : files to read (by now just reading a file)
   -o <output file> : output file where the final table is sent
   -O : same as -o but the name is assigned automatically based on the options given
@@ -64,6 +65,7 @@ The script accepts several command line options. Copying from the script:
     * REGULARSOS : points, SOS, SOSOS
     * WSOS : weighted SOS = points + SOS/remaining rounds, points
     * SOS : SOS/SOSOS, points
+    * SOSOS : SOSOS/SOS, points
   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
                 rounds, and WSOS does not matter (weights 0.00% in the last round)
   -c <round #> : count up to round #
