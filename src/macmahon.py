@@ -18,7 +18,9 @@
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
 #:
-#: file contains ...
+#: See the README.md file for information about the scoring system, its
+#: concepts like SOS, PwSOS etc, and the input format.
+
 from __future__ import print_function
 
 import sys
@@ -26,6 +28,7 @@ import getopt
 
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
+# TODO : -h option
 
 class Score :
 
