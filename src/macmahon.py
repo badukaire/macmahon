@@ -1,8 +1,9 @@
 #: processes a set of teams, settings and rounds and displays the standings according
 #: to the settings
 #:
-#: usage: python p.py [<options>] <file>
+#: usage: python macmahon.py [<options>] <file>
 #: options:
+#:   -h : help, displays this information
 #:   -f <file> : files to read (by now just reading a file)
 #:   -o <output file> : output file where the final table is sent
 #:   -O : same as -o but the name is assigned automatically based on the options given
@@ -13,11 +14,14 @@
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
+#:     * SOSOS : SOSOS/SOS, points
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
 #:
-#: file contains ...
+#: See the README.md file for information about the scoring system, its
+#: concepts like SOS, PwSOS etc, and the input format.
+
 from __future__ import print_function
 
 import sys
@@ -26,11 +30,16 @@ import getopt
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
 
+# TODO : move options treatment to Settings class?
+
+
+gsVersion = "0.1.0"
+
 class Score :
 
-  gsHeaderShort1 = " G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS"
-  gsSepHdrShort1 = "------|------------------|-----------|------"
-  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d  | %4d %4d | %3d"
+  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS"
+  gsSepHdrShort1 = "------|-----------------|-----------|------"
+  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d"
 
 
   def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
@@ -160,6 +169,17 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
+    elif iOptSort == Macmahon.SORT_SOSOS :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_SOSOS )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miSOSOS,
+          self.mDict[ team ].miSOS,
+          self.mDict[ team ].miPoints,
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
+        ),
+        reverse = True )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
@@ -208,11 +228,13 @@ class Macmahon :
   OPT_SORT_REGULARSOS = "REGULARSOS"
   OPT_SORT_WSOS = "WSOS"
   OPT_SORT_SOS = "SOS"
+  OPT_SORT_SOSOS = "SOSOS"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
   SORT_WSOS = 3
   SORT_SOS = 4
+  SORT_SOSOS = 5
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -232,13 +254,14 @@ class Macmahon :
     OPT_SORT_REGULARSOS : SORT_REGULARSOS,
     OPT_SORT_WSOS : SORT_WSOS,
     OPT_SORT_SOS : SORT_SOS,
+    OPT_SORT_SOSOS : SORT_SOSOS,
   }
 
   @staticmethod
   def usage() :
     liLine = 0
     print( "" )
-    print( sys.argv[ 0 ] )
+    #print( sys.argv[ 0 ] )
     lF = open( sys.argv[ 0 ], 'r' )
     lbFirstComm = True
     lsL = lF.readline()
@@ -253,6 +276,8 @@ class Macmahon :
 
 
   def __init__( self ) :
+
+    Macmahon.displayVersion()
 
     self.miOptFormat = Macmahon.FORMAT_TABLE
     self.miOptSort = Macmahon.SORT_NONE
@@ -275,6 +300,10 @@ class Macmahon :
   def eprint( sErrorMsg ) :
     print( sErrorMsg, file=sys.stderr )
 
+
+  @staticmethod
+  def displayVersion() :
+    print( "MacMahon for teams, v%s" % gsVersion )
 
 
   def state( self, iState ) :
@@ -575,6 +604,8 @@ class Macmahon :
       lsName += "sortWeightedSOS_"
     elif self.miOptSort == Macmahon.SORT_SOS :
       lsName += "sortSOS_"
+    elif self.miOptSort == Macmahon.SORT_SOSOS :
+      lsName += "sortSOSOS_"
     if self.miOptBye == Macmahon.BYE_IGNORE :
       lsName += "byeIgnore_"
     if self.miOptBye == Macmahon.BYE_DRAW :
@@ -634,7 +665,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:O' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:Oh' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -652,7 +683,11 @@ class Macmahon :
     lDateRange = None
     for lOpt in lOptList :
       #print( 'lOpt :' + str( lOpt ) )
-      if lOpt[0] == '-d' :
+      if lOpt[0] == '-h' :
+          print( "Displaying help, see README.md for more info." )
+          Macmahon.usage()
+          sys.exit( 0 )
+      elif lOpt[0] == '-d' :
         lsVal = lOpt[1]
         if lsVal not in Macmahon.gOptDict_Format.keys() :
           print( "FATAL: wrong value '%s' for option '%s'" % ( lsVal, lOpt[0] ) )
@@ -740,6 +775,8 @@ if __name__ == "__main__" :
     for lsFile in lMacmahon.msFiles :
       lMacmahon.readMovs( lsFile )
   """
+
+  Macmahon.displayVersion()
 
   lMacmahon.standings()
 
