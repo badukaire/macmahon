@@ -3,6 +3,7 @@
 #:
 #: usage: python p.py [<options>] <file>
 #: options:
+#:   -h : help, displays this information
 #:   -f <file> : files to read (by now just reading a file)
 #:   -o <output file> : output file where the final table is sent
 #:   -O : same as -o but the name is assigned automatically based on the options given
@@ -28,7 +29,6 @@ import getopt
 
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
-# TODO : -h option
 
 class Score :
 
@@ -654,7 +654,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:O' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:Oh' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -672,7 +672,11 @@ class Macmahon :
     lDateRange = None
     for lOpt in lOptList :
       #print( 'lOpt :' + str( lOpt ) )
-      if lOpt[0] == '-d' :
+      if lOpt[0] == '-h' :
+          print( "Displaying help, see README.md for more info." )
+          Macmahon.usage()
+          sys.exit( 0 )
+      elif lOpt[0] == '-d' :
         lsVal = lOpt[1]
         if lsVal not in Macmahon.gOptDict_Format.keys() :
           print( "FATAL: wrong value '%s' for option '%s'" % ( lsVal, lOpt[0] ) )
