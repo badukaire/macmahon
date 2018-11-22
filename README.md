@@ -123,10 +123,38 @@ castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
 ```
 It can be seen that amongst other things, the team that was 2nd in the first table, has gone down to the 5th place, and the team that was 5th is now 3rd.
 
+
 # input format
 
-The input consists on a (DOS-format) file that is divided into 3 sections: teams declaration, settings, and rounds. Team declaration section is always done at the beginning. The settings section is optional and if exists should be between the teams and before any round. It is declared by the `:settings` tag. Rounds come afterwards and each one starts with the `:round` tag. The round number is never declared, it is calculated implicitly.
+The input consists on a (DOS-fileformat) file that is divided into 3 sections: teams declaration, settings, and rounds. Team declaration section is always done at the beginning. The settings section is optional and if exists should be between the teams and before any round. It is declared by the `:settings` tag. Rounds come afterwards and each one starts with the `:round` tag.
 
 Lines starting with `#` are considered comments. Actually everything after a `#` is considered a comment.
 
-TODO describe input
+## team declaration section
+
+The teams section at the beginning simply consists on the declaration of the list of teams. In case the league has an odd number of participants and includes a BYE team/player, such a BYE player **should not** be declared.
+
+Team names by now must be formed only by a word. In the future perhaps it will be allowed to use longer names, or to use aliases.
+
+
+## settings section
+
+After the team declaration it is posssible to set some settings. This is not yet implemented but it would include stuff such as the bye treatment and the sorting criterium. These options would be overridden by the command line options, their only use would be to deploy self contained files for users who do not want to use the command line.
+
+## rounds sections
+
+Then come the rounds, each one starting with the `:round` tag. The round number is never declared, it is calculated implicitly.
+
+In these rounds there are the matches. Each match consist
+
+## match formats
+
+In order to facilitate copying and pasting from web sites, the matches can be entered in a number of different formats. These formats are as follows:
+
+- team1 1 - 0 team2
+- team1 1 - team2 0
+- team1 vs team2 : 1 - 0 : not yet implemented
+- team1 - team2 : 1 - 0  : not yet implemented
+
+Therefore, the team name in 1 word, and the result can be in several orders.
+
