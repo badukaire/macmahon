@@ -30,6 +30,9 @@ import getopt
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
 
+# TODO : move options treatment to Settings class?
+
+
 class Score :
 
   gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS"
