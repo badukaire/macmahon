@@ -1,7 +1,7 @@
 #: processes a set of teams, settings and rounds and displays the standings according
 #: to the settings
 #:
-#: usage: python p.py [<options>] <file>
+#: usage: python macmahon.py [<options>] <file>
 #: options:
 #:   -h : help, displays this information
 #:   -f <file> : files to read (by now just reading a file)
@@ -32,6 +32,8 @@ import getopt
 
 # TODO : move options treatment to Settings class?
 
+
+gsVersion = "0.1.0"
 
 class Score :
 
@@ -259,7 +261,7 @@ class Macmahon :
   def usage() :
     liLine = 0
     print( "" )
-    print( sys.argv[ 0 ] )
+    #print( sys.argv[ 0 ] )
     lF = open( sys.argv[ 0 ], 'r' )
     lbFirstComm = True
     lsL = lF.readline()
@@ -274,6 +276,8 @@ class Macmahon :
 
 
   def __init__( self ) :
+
+    Macmahon.displayVersion()
 
     self.miOptFormat = Macmahon.FORMAT_TABLE
     self.miOptSort = Macmahon.SORT_NONE
@@ -296,6 +300,10 @@ class Macmahon :
   def eprint( sErrorMsg ) :
     print( sErrorMsg, file=sys.stderr )
 
+
+  @staticmethod
+  def displayVersion() :
+    print( "MacMahon for teams, v%s" % gsVersion )
 
 
   def state( self, iState ) :
@@ -767,6 +775,8 @@ if __name__ == "__main__" :
     for lsFile in lMacmahon.msFiles :
       lMacmahon.readMovs( lsFile )
   """
+
+  Macmahon.displayVersion()
 
   lMacmahon.standings()
 
