@@ -384,7 +384,7 @@ class Macmahon :
       except :
         return None
 
-    print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    #print( "team:%s, score:%d" % ( lsTeam, liScore ) )
     return lsTeam, liScore
 
 
@@ -413,7 +413,7 @@ class Macmahon :
 
     if self.miOptBye == Macmahon.BYE_IGNORE :
       if Macmahon.TEXT_BYE in ( lsTeamHome, lsTeamAway ) :
-        print( "BYE match, ignoring" )
+        #print( "BYE match, ignoring" )
         return
 
     lScoreHome = self.mTeams.getScore( lsTeamHome )
@@ -480,10 +480,10 @@ class Macmahon :
 
   def processRoundSos( self ) :
 
-    print("====")
+    #print("====")
     liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
     liWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
-    print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
+    #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
       #print( "calculating SOS for team %s" % lsTeam )
@@ -497,9 +497,9 @@ class Macmahon :
         #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOS += liPoints
         #print("-")
-      print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
+      #print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
       liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
-      print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
+      #print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
@@ -509,8 +509,8 @@ class Macmahon :
 
   def processRoundSosos( self ) :
 
-    print("====")
-    print( "processRoundSosos, round %d" % ( self.miRound ) )
+    #print("====")
+    #print( "processRoundSosos, round %d" % ( self.miRound ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
       #print( "calculating SOS for team %s" % lsTeam )
@@ -524,7 +524,7 @@ class Macmahon :
         #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOSOS += liSOS
         #print("-")
-      print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+      #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
@@ -546,7 +546,7 @@ class Macmahon :
       sys.exit(1)
 
     self.processMatch(teamHome, teamAway)
-    print( "--" )
+    #print( "--" )
 
 
   def parseLine( self, sLine0 ) :
