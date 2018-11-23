@@ -9,12 +9,13 @@
 #:   -O : same as -o but the name is assigned automatically based on the options given
 #:   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-#:   -s <sort> : sort by one of (commas indicate tiebreakers):
+#:   -s <sort> : sort by one of (commas indicate tiebreakers). If not set, the order is undeterminated.
 #:     * REGULAR : points, goal avg
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
 #:     * SOSOS : SOSOS/SOS, points
+#:     * NAME : team name
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
@@ -33,7 +34,7 @@ import getopt
 # TODO : move options treatment to Settings class?
 
 
-gsVersion = "0.1.0"
+gsVersion = "0.2.0"
 
 class Score :
 
@@ -47,7 +48,7 @@ class Score :
     self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS )
 
 
-  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS ) :
+  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
     self.miMatches = iMatches
     self.miPoints = iPoints
@@ -88,8 +89,10 @@ class Teams :
     self.mDict = dict()
     for lsTeam in self.mSet :
       self.mDict[ lsTeam ] = Score()
+    print("total number of added teams = %d" % len( self.mSet ) )
     self.mSet = None
     self.mListSortedTeams = None
+    self.mDictOpponents = dict()
 
 
   def add( self, sTeam ) :
@@ -122,6 +125,31 @@ class Teams :
       print( "team %s NOT found, cant be updated" % sTeam )
       lRet = None
     return lRet
+
+
+  def addOpponent( self, sTeam, sTeamOpponent ) :
+
+    #print("adding opponent for team %s : %s" % ( sTeam, sTeamOpponent ) )
+    try :
+      lList = self.mDictOpponents[ sTeam ]
+      #print("  found %d opponents" % len(lList) )
+    except :
+      #print("  no opponents found" )
+      lList = []
+    lList.append( sTeamOpponent )
+    self.mDictOpponents[ sTeam ] = lList
+    #print("  opponents now = %d" % len( self.mDictOpponents[ sTeam ] ) )
+
+    #self.mDictOpponents[ sTeam ] = [ sTeamOpponent, ]
+
+  def getOpponentsList( self, sTeam ) :
+
+    try :
+      lList = self.mDictOpponents[ sTeam ]
+    except :
+      lList = []
+
+    return lList
 
 
   def sort( self, iOptSort ) :
@@ -180,6 +208,9 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
+    elif iOptSort == Macmahon.SORT_NAME :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_NAME )
+      self.mListSortedTeams = sorted( self.mDict.keys() )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
@@ -229,12 +260,14 @@ class Macmahon :
   OPT_SORT_WSOS = "WSOS"
   OPT_SORT_SOS = "SOS"
   OPT_SORT_SOSOS = "SOSOS"
+  OPT_SORT_NAME = "NAME"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
   SORT_WSOS = 3
   SORT_SOS = 4
   SORT_SOSOS = 5
+  SORT_NAME = 6
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -255,6 +288,7 @@ class Macmahon :
     OPT_SORT_WSOS : SORT_WSOS,
     OPT_SORT_SOS : SORT_SOS,
     OPT_SORT_SOSOS : SORT_SOSOS,
+    OPT_SORT_NAME : SORT_NAME,
   }
 
   @staticmethod
@@ -288,7 +322,6 @@ class Macmahon :
     self.miOptRounds = 0
     self.miOptCountRound = 0
 
-    self.miWeightedSOS = -1
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
 
@@ -322,7 +355,12 @@ class Macmahon :
       if not self.miState == Macmahon.STATE_NONE :
         self.miState = iState
 
-        self.standings()
+        if self.miRound >= 1 :
+          print( "processing SOS for round %d" % self.miRound )
+          self.processRoundSos()
+          self.processRoundSosos()
+          self.standings()
+
         self.miRound += 1
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
@@ -345,7 +383,7 @@ class Macmahon :
       except :
         return None
 
-    print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    #print( "team:%s, score:%d" % ( lsTeam, liScore ) )
     return lsTeam, liScore
 
 
@@ -355,7 +393,8 @@ class Macmahon :
     if lss[ 0 ] == Macmahon.TEXT_BYE :
       print( "error team %s is not a valid name (it is added automatically)" % lss[ 0 ] )
       sys.exit(1)
-    print( "adding team %s" % lss[ 0 ] )
+    # TODO debug-level trace
+    # print( "adding team %s" % lss[ 0 ] )
     if self.mTeams.add( lss[ 0 ] ) == 0 :
       print( "error adding team %s, was it already added?" % lss[ 0 ] )
       sys.exit(1)
@@ -373,7 +412,7 @@ class Macmahon :
 
     if self.miOptBye == Macmahon.BYE_IGNORE :
       if Macmahon.TEXT_BYE in ( lsTeamHome, lsTeamAway ) :
-        print( "BYE match, ignoring" )
+        #print( "BYE match, ignoring" )
         return
 
     lScoreHome = self.mTeams.getScore( lsTeamHome )
@@ -427,22 +466,68 @@ class Macmahon :
       liGoalsRecvHome = lScoreHome.miGoalsRecv + liGoalsAway
       liGoalsRecvAway = lScoreAway.miGoalsRecv + liGoalsHome
 
-    liSosHome = lScoreAway.miSOS + liPointsAway
-    liSosAway = lScoreHome.miSOS + liPointsHome
-
-    liSososHome = lScoreAway.miSOSOS + liSosAway
-    liSososAway = lScoreHome.miSOSOS + liSosHome
-
-    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
-    liPointSosHome = liPointsHome + (liRounds - self.miRound) * liSosHome / liRounds
-    liPointSosAway = liPointsAway + (liRounds - self.miRound) * liSosAway / liRounds
-    self.miWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
-
-    lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
-    lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
+    lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome )
+    lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway )
 
     self.mTeams.setScore( lsTeamHome, lNewScoreHome )
     self.mTeams.setScore( lsTeamAway, lNewScoreAway )
+
+    self.mTeams.addOpponent( lsTeamHome, lsTeamAway )
+    self.mTeams.addOpponent( lsTeamAway, lsTeamHome )
+
+
+
+  def processRoundSos( self ) :
+
+    #print("====")
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
+    #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
+    for lsTeam in self.mTeams.mDict.keys() :
+      # TODO : ignore BYE if IGNORE/LOSS
+      #print( "calculating SOS for team %s" % lsTeam )
+      lListOpponents = self.mTeams.getOpponentsList( lsTeam )
+      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      liSOS = 0
+      for lsTeamOpp in lListOpponents :
+        lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
+        liPoints = lScoreOpp.miPoints
+        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        liSOS += liPoints
+        #print("-")
+      #print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
+      liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
+      #print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
+
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
+      self.mTeams.setScore( lsTeam, lNewScore )
+      #print("--")
+
+
+
+  def processRoundSosos( self ) :
+
+    #print("====")
+    #print( "processRoundSosos, round %d" % ( self.miRound ) )
+    for lsTeam in self.mTeams.mDict.keys() :
+      # TODO : ignore BYE if IGNORE/LOSS
+      #print( "calculating SOS for team %s" % lsTeam )
+      lListOpponents = self.mTeams.getOpponentsList( lsTeam )
+      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      liSOSOS = 0
+      for lsTeamOpp in lListOpponents :
+        lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
+        liSOS = lScoreOpp.miSOS
+        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        liSOSOS += liSOS
+        #print("-")
+      #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
+      self.mTeams.setScore( lsTeam, lNewScore )
+      #print("--")
 
 
 
@@ -453,7 +538,6 @@ class Macmahon :
       if lss[2] == "-" :
         teamHome = Macmahon.teamScore( lss[0], lss[1] )
         teamAway = Macmahon.teamScore( lss[3], lss[4] )
-        print( "--" )
 
     if teamHome == None and teamAway == None :
       print( "ERROR parsing match result" )
@@ -461,6 +545,7 @@ class Macmahon :
       sys.exit(1)
 
     self.processMatch(teamHome, teamAway)
+    #print( "--" )
 
 
   def parseLine( self, sLine0 ) :
@@ -561,10 +646,11 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
     print("round %d / %d  => w (weighted SOS) = %d%% -- PwSOS = P + w * SOS" % (
       self.miRound,
       self.miOptRounds if self.miOptRounds > 0 else self.miRound,
-      self.miWeightedSOS )
+      (liRounds - self.miRound) * 100 / liRounds )
     )
     self.displayBye()
     self.mTeams.sort( self.miOptSort )
@@ -593,7 +679,8 @@ class Macmahon :
     if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
       lsName += "RAW_"
     else :
-      lsName = "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+      lsName += "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
     elif self.miOptSort == Macmahon.SORT_REGULAR :
@@ -606,6 +693,9 @@ class Macmahon :
       lsName += "sortSOS_"
     elif self.miOptSort == Macmahon.SORT_SOSOS :
       lsName += "sortSOSOS_"
+    elif self.miOptSort == Macmahon.SORT_NAME :
+      lsName += "sortNAME_"
+
     if self.miOptBye == Macmahon.BYE_IGNORE :
       lsName += "byeIgnore_"
     if self.miOptBye == Macmahon.BYE_DRAW :
@@ -640,6 +730,8 @@ class Macmahon :
         print( "reached max round count %d, stopping .." % self.miOptCountRound )
         self.miRound -= 1
         break
+    self.processRoundSos()
+    self.processRoundSosos()
     print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
       self.mFile.close()
@@ -734,7 +826,7 @@ class Macmahon :
           print( "ERROR: %s not a valid number" %  lsVal )
           sys.exit(1)
         if self.miOptCountRound < 1 or self.miOptCountRound > 20 :
-          print( "ERROR: %d must have a value between 2 and 20" % self.miOptCountRound )
+          print( "ERROR: %d must have a value between 1 and 20" % self.miOptCountRound )
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
