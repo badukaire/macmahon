@@ -16,16 +16,16 @@ The input is a file with a list of the teams and the matches results, separated 
 ```
 round 4 / 8  => w (weighted SOS) = 50% -- PwSOS = P + w * SOS
 bye treatment: IGNORE
-sorting by: WSOS
+sorting by: REGULAR
 team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
 -------------- ------|-----------------|-----------|------
-athc            4 10 |  18 -   2 =  16 |   10  110 |  15
 junior          4 12 |  20 -   1 =  19 |    7  122 |  12
 polo            4 10 |  32 -   5 =  27 |    7  110 |  10
+athc            4 10 |  18 -   2 =  16 |   10  110 |  15
 valles          3  7 |   5 -   3 =   2 |   10   78 |   7
 terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
-castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
 egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
+castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
 linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
 iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
 ```
@@ -84,19 +84,20 @@ python p.py -f ..\testData\test1.txt -d TABLE -s REGULARSOS -b IGNORE
 ```
 Which yields the following table:
 ```
+round 4 / 8  => w (weighted SOS) = 50% -- PwSOS = P + w * SOS
 bye treatment: IGNORE
 sorting by: REGULARSOS
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
--------------- ------|------------------|-----------|------
-junior          4 12 |  20 -   1 =  19  |   14   37 |  19
-athc            4 10 |  18 -   2 =  16  |   15   31 |  17
-polo            4 10 |  32 -   5 =  27  |    3   20 |  11
-valles          3  7 |   5 -   3 =   2  |   10   23 |  12
-terrassa        3  4 |   7 -   5 =   2  |   21   32 |  14
-egara           4  3 |   9 -  16 =  -7  |   16   31 |  11
-iluro           3  0 |   2 -  26 = -24  |   17   16 |   8
-linia22         4  0 |   4 -  27 = -23  |   12   19 |   6
-castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
+team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
+-------------- ------|-----------------|-----------|------
+junior          4 12 |  20 -   1 =  19 |    7  122 |  12
+athc            4 10 |  18 -   2 =  16 |   10  110 |  15
+polo            4 10 |  32 -   5 =  27 |    7  110 |  10
+valles          3  7 |   5 -   3 =   2 |   10   78 |   7
+terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
+egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
+linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
+castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
+iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
 ```
 This changes something, but not much: Only 2 pairs of teams which were tied by points get their standings reverted. Which makes sense since you would score more goals to a weaker team. In other words, teams who score more is because have played against weaker teams.
 
@@ -107,21 +108,22 @@ python p.py -f ..\testData\test1.txt -d TABLE -s WSOS -b IGNORE
 ```
 Which yields the following table, where it can be seen that many things have changed:
 ```
+round 4 / 8  => w (weighted SOS) = 50% -- PwSOS = P + w * SOS
 bye treatment: IGNORE
 sorting by: WSOS
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
--------------- ------|------------------|-----------|------
-junior          4 12 |  20 -   1 =  19  |   14   37 |  19
-athc            4 10 |  18 -   2 =  16  |   15   31 |  17
-terrassa        3  4 |   7 -   5 =   2  |   21   32 |  14
-valles          3  7 |   5 -   3 =   2  |   10   23 |  12
-polo            4 10 |  32 -   5 =  27  |    3   20 |  11
-egara           4  3 |   9 -  16 =  -7  |   16   31 |  11
-iluro           3  0 |   2 -  26 = -24  |   17   16 |   8
-linia22         4  0 |   4 -  27 = -23  |   12   19 |   6
-castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
+team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
+-------------- ------|-----------------|-----------|------
+athc            4 10 |  18 -   2 =  16 |   10  110 |  15
+junior          4 12 |  20 -   1 =  19 |    7  122 |  12
+polo            4 10 |  32 -   5 =  27 |    7  110 |  10
+valles          3  7 |   5 -   3 =   2 |   10   78 |   7
+terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
+castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
+egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
+linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
+iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
 ```
-It can be seen that amongst other things, the team that was 2nd in the first table, has gone down to the 5th place, and the team that was 5th is now 3rd.
+It can be seen that amongst other things, the team was 2nd in the first table, has gone down to the 3rd place, and the team that was 3rd is now 1st.
 
 
 # input format
