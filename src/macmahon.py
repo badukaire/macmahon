@@ -9,12 +9,13 @@
 #:   -O : same as -o but the name is assigned automatically based on the options given
 #:   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-#:   -s <sort> : sort by one of (commas indicate tiebreakers):
+#:   -s <sort> : sort by one of (commas indicate tiebreakers). If not set, the order is undeterminated.
 #:     * REGULAR : points, goal avg
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
 #:     * SOSOS : SOSOS/SOS, points
+#:     * NAME : team name
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
@@ -181,6 +182,9 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
+    elif iOptSort == Macmahon.SORT_NAME :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_NAME )
+      self.mListSortedTeams = sorted( self.mDict.keys() )
     else : # unsorted
       print( "sorting by: unsorted" )
       self.mListSortedTeams = self.mDict.keys()
@@ -230,12 +234,14 @@ class Macmahon :
   OPT_SORT_WSOS = "WSOS"
   OPT_SORT_SOS = "SOS"
   OPT_SORT_SOSOS = "SOSOS"
+  OPT_SORT_NAME = "NAME"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
   SORT_WSOS = 3
   SORT_SOS = 4
   SORT_SOSOS = 5
+  SORT_NAME = 6
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -256,6 +262,7 @@ class Macmahon :
     OPT_SORT_WSOS : SORT_WSOS,
     OPT_SORT_SOS : SORT_SOS,
     OPT_SORT_SOSOS : SORT_SOSOS,
+    OPT_SORT_NAME : SORT_NAME,
   }
 
   @staticmethod
@@ -346,8 +353,7 @@ class Macmahon :
       except :
         return None
 
-    # TODO debug-level trace
-    # print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    print( "team:%s, score:%d" % ( lsTeam, liScore ) )
     return lsTeam, liScore
 
 
@@ -597,6 +603,7 @@ class Macmahon :
       lsName += "RAW_"
     else :
       lsName = "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
     elif self.miOptSort == Macmahon.SORT_REGULAR :
@@ -609,6 +616,9 @@ class Macmahon :
       lsName += "sortSOS_"
     elif self.miOptSort == Macmahon.SORT_SOSOS :
       lsName += "sortSOSOS_"
+    elif self.miOptSort == Macmahon.SORT_NAME :
+      lsName += "sortNAME_"
+
     if self.miOptBye == Macmahon.BYE_IGNORE :
       lsName += "byeIgnore_"
     if self.miOptBye == Macmahon.BYE_DRAW :
