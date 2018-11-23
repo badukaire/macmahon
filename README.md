@@ -9,7 +9,7 @@ This may be useful to know, when not all games in sport leagues have been played
 The script allows several options for computing the ratings:
 
 - bye treatment: the byes can be treated as a LOSS/NOT-PLAYED/IGNORED, DRAW (a draw is awarded) and a WIN (a win is awarded).
-- sorting criteria: so far there are 3 possible options: REGULAR (ignoring MacMahon stuff), REGULARSOS (same as REGULAR but Macmahon's SOS is a tiebreaker) and WSOS (the score is the points + the weighted SOS).
+- sorting criteria: The most useful ones are REGULAR (ignoring MacMahon stuff) and WSOS (the score is the points + the weighted SOS), but there are a few more. See below for a detailed list.
 
 The input is a file with a list of the teams and the matches results, separated by rounds. See example in section _input_. And the output is a table with the games played, points, goals (scored, received, average), SOS, SOSOS and PhSOS (points + SOS/2). See example here (sorted by the REGULAR criterium):
 
