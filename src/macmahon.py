@@ -35,7 +35,7 @@ import getopt
 # TODO : move options treatment to Settings class?
 
 
-gsVersion = "0.2.0"
+gsVersion = "0.2.1"
 
 class Score :
 
