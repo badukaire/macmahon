@@ -12,6 +12,7 @@
 #:   -s <sort> : sort by one of (commas indicate tiebreakers). If not set, the order is undeterminated.
 #:     * REGULAR : points, goal avg
 #:     * REGULARSOS : points, SOS, SOSOS
+#:     * GOALAVG : goal avg, points
 #:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
 #:     * SOS : SOS/SOSOS, points
 #:     * SOSOS : SOSOS/SOS, points
@@ -174,6 +175,15 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
+    if iOptSort == Macmahon.SORT_GOALAVG :
+      print( "sorting by: %s" % Macmahon.OPT_SORT_GOALAVG )
+      self.mListSortedTeams = sorted(
+        self.mDict,
+        key = lambda team : (
+          self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
+          self.mDict[ team ].miPoints,
+        ),
+        reverse = True )
     elif iOptSort == Macmahon.SORT_WSOS :
       print( "sorting by: %s" % Macmahon.OPT_SORT_WSOS )
       self.mListSortedTeams = sorted(
@@ -261,6 +271,7 @@ class Macmahon :
   OPT_SORT_SOS = "SOS"
   OPT_SORT_SOSOS = "SOSOS"
   OPT_SORT_NAME = "NAME"
+  OPT_SORT_GOALAVG = "GOALAVG"
   SORT_NONE = 0
   SORT_REGULAR = 1
   SORT_REGULARSOS = 2
@@ -268,6 +279,7 @@ class Macmahon :
   SORT_SOS = 4
   SORT_SOSOS = 5
   SORT_NAME = 6
+  SORT_GOALAVG = 7
 
   gOptDict_Format = {
     OPT_FORMAT_SET : FORMAT_SET,
@@ -289,6 +301,7 @@ class Macmahon :
     OPT_SORT_SOS : SORT_SOS,
     OPT_SORT_SOSOS : SORT_SOSOS,
     OPT_SORT_NAME : SORT_NAME,
+    OPT_SORT_GOALAVG : SORT_GOALAVG,
   }
 
   @staticmethod
