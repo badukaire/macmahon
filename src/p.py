@@ -6,7 +6,7 @@
 #:   -f <file> : files to read (by now just reading a file)
 #:   -o <output file> : output file where the final table is sent
 #:   -O : same as -o but the name is assigned automatically based on the options given
-#:   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
+#:   -d <display> : display format: TABLE, SET, SET_GOALSFIRST
 #:   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
 #:   -s <sort> : sort by one of (commas indicate tiebreakers):
 #:     * REGULAR : points, goal avg
@@ -15,7 +15,6 @@
 #:     * SOS : SOS/SOSOS, points
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
-#:   -c <round #> : count up to round #
 #:
 #: file contains ...
 from __future__ import print_function
@@ -23,8 +22,10 @@ from __future__ import print_function
 import sys
 import getopt
 
+# TODO : add option to compute up to a specified round
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
+# TODO : display position?
 
 class Score :
 
@@ -189,12 +190,10 @@ class Macmahon :
   OPT_FORMAT_SET = "SET"
   OPT_FORMAT_SET_GOALSFIRST = "SET_GOALSFIRST"
   OPT_FORMAT_TABLE = "TABLE"
-  OPT_FORMAT_TABLE_POS = "TABLE_POS"
   FORMAT_NONE = 0
   FORMAT_SET = 1
   FORMAT_SET_GOALSFIRST = 2
   FORMAT_TABLE = 11
-  FORMAT_TABLE_POS = 12
 
   OPT_BYE_IGNORE = "IGNORE"
   OPT_BYE_DRAW = "DRAW"
@@ -218,7 +217,6 @@ class Macmahon :
     OPT_FORMAT_SET : FORMAT_SET,
     OPT_FORMAT_SET_GOALSFIRST : FORMAT_SET_GOALSFIRST,
     OPT_FORMAT_TABLE : FORMAT_TABLE,
-    OPT_FORMAT_TABLE_POS : FORMAT_TABLE_POS,
   }
 
   gOptDict_Bye = {
@@ -261,7 +259,6 @@ class Macmahon :
     self.msOptOutputfile = None
     self.mbOptOutputfileAuto = False
     self.miOptRounds = 0
-    self.miOptCountRound = 0
 
     self.miWeightedSOS = -1
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
@@ -295,6 +292,8 @@ class Macmahon :
 
         self.standings()
         self.miRound += 1
+        #if self.miRound == 3 :
+        #  sys.exit(0)
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
       self.mTeams.initialize()
@@ -486,21 +485,6 @@ class Macmahon :
       print( "%-14s %s" % ( lsTeam, lsRow ) )
 
 
-  def standings_short2( self, bHeader = True ) :
-
-    if bHeader :
-      print( "pl %-14s %s" % ( Macmahon.TEXT_TEAM, Score.gsHeaderShort1 ) )
-      print( "%s %s"    % ( "-" * 17, Score.gsSepHdrShort1 ) )
-    liPos = 0
-    for lsTeam in self.mTeams.mListSortedTeams :
-      liPos += 1
-      if self.miOptBye == Macmahon.BYE_IGNORE :
-        if lsTeam == Macmahon.TEXT_BYE :
-          continue
-      lsRow = Score.textFormat_short1( self.mTeams.mDict[ lsTeam ] )
-      print( "%2d %-14s %s" % ( liPos, lsTeam, lsRow ) )
-
-
   def standings_set( self, bGoalsFirst = True ) :
 
     for lsTeam in self.mTeams.mListSortedTeams :
@@ -532,7 +516,7 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
-    print("round %d / %d  => w (weighted SOS) = %d%% -- PwSOS = P + w * SOS" % (
+    print("round %d / %d  => weighted SOS = %d%%" % (
       self.miRound,
       self.miOptRounds if self.miOptRounds > 0 else self.miRound,
       self.miWeightedSOS )
@@ -545,8 +529,6 @@ class Macmahon :
 
     if iFormat == Macmahon.FORMAT_NONE or iFormat == Macmahon.FORMAT_TABLE :
       self.standings_short1( bHeader = True )
-    if iFormat == Macmahon.FORMAT_TABLE_POS :
-      self.standings_short2( bHeader = True )
     elif iFormat == Macmahon.FORMAT_SET :
       self.standings_set( bGoalsFirst = False )
     elif iFormat == Macmahon.FORMAT_SET_GOALSFIRST :
@@ -561,10 +543,7 @@ class Macmahon :
       lsName = self.msFile.split("/")[-1] # remove directories
       lsName = lsName.split(".")[0] # remove extension
     lsName += "_"
-    if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
-      lsName += "RAW_"
-    else :
-      lsName = "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+    lsName += "RAW_" if not self.miOptFormat == Macmahon.FORMAT_TABLE else ""
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
     elif self.miOptSort == Macmahon.SORT_REGULAR :
@@ -605,10 +584,6 @@ class Macmahon :
     for lsLine in self.mFile :
       liLines += 1
       liErrors += self.parseLine( lsLine )
-      if not self.miOptCountRound == 0 and self.miRound > self.miOptCountRound :
-        print( "reached max round count %d, stopping .." % self.miOptCountRound )
-        self.miRound -= 1
-        break
     print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
       self.mFile.close()
@@ -634,7 +609,7 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:O' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:d:b:s:o:O' )
 
     except getopt.GetoptError:
       Macmahon.eprint( "FATAL : error analyzing command line options" )
@@ -689,17 +664,6 @@ class Macmahon :
           sys.exit(1)
         if self.miOptRounds < 2 or self.miOptRounds > 20 :
           print( "ERROR: %d must have a value between 2 and 20" % self.miOptRounds )
-          sys.exit(1)
-      elif lOpt[0] == '-c':
-        lsVal = lOpt[1]
-        print( "option '%s' (count up to round #) : %s" % ( lOpt[0], lsVal ) )
-        try :
-          self.miOptCountRound = int( lsVal )
-        except :
-          print( "ERROR: %s not a valid number" %  lsVal )
-          sys.exit(1)
-        if self.miOptCountRound < 1 or self.miOptCountRound > 20 :
-          print( "ERROR: %d must have a value between 2 and 20" % self.miOptCountRound )
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
