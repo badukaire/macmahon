@@ -48,7 +48,7 @@ class Score :
     self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS )
 
 
-  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS ) :
+  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
     self.miMatches = iMatches
     self.miPoints = iPoints
@@ -92,6 +92,7 @@ class Teams :
     print("total number of added teams = %d" % len( self.mSet ) )
     self.mSet = None
     self.mListSortedTeams = None
+    self.mDictOpponents = dict()
 
 
   def add( self, sTeam ) :
@@ -124,6 +125,31 @@ class Teams :
       print( "team %s NOT found, cant be updated" % sTeam )
       lRet = None
     return lRet
+
+
+  def addOpponent( self, sTeam, sTeamOpponent ) :
+
+    #print("adding opponent for team %s : %s" % ( sTeam, sTeamOpponent ) )
+    try :
+      lList = self.mDictOpponents[ sTeam ]
+      #print("  found %d opponents" % len(lList) )
+    except :
+      #print("  no opponents found" )
+      lList = []
+    lList.append( sTeamOpponent )
+    self.mDictOpponents[ sTeam ] = lList
+    #print("  opponents now = %d" % len( self.mDictOpponents[ sTeam ] ) )
+
+    #self.mDictOpponents[ sTeam ] = [ sTeamOpponent, ]
+
+  def getOpponentsList( self, sTeam ) :
+
+    try :
+      lList = self.mDictOpponents[ sTeam ]
+    except :
+      lList = []
+
+    return lList
 
 
   def sort( self, iOptSort ) :
@@ -330,7 +356,11 @@ class Macmahon :
       if not self.miState == Macmahon.STATE_NONE :
         self.miState = iState
 
-        self.standings()
+        if self.miRound >= 1 :
+          print( "processing SOS for round %d" % self.miRound )
+          self.processRoundSos()
+          self.standings()
+
         self.miRound += 1
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
@@ -436,22 +466,43 @@ class Macmahon :
       liGoalsRecvHome = lScoreHome.miGoalsRecv + liGoalsAway
       liGoalsRecvAway = lScoreAway.miGoalsRecv + liGoalsHome
 
-    liSosHome = lScoreAway.miSOS + liPointsAway
-    liSosAway = lScoreHome.miSOS + liPointsHome
-
-    liSososHome = lScoreAway.miSOSOS + liSosAway
-    liSososAway = lScoreHome.miSOSOS + liSosHome
-
-    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
-    liPointSosHome = liPointsHome + (liRounds - self.miRound) * liSosHome / liRounds
-    liPointSosAway = liPointsAway + (liRounds - self.miRound) * liSosAway / liRounds
-    self.miWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
-
-    lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome, liSosHome, liSososHome, liPointSosHome )
-    lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway, liSosAway, liSososAway, liPointSosAway )
+    lNewScoreHome = Score( liMatchesHome, liPointsHome, liGoalsMadeHome, liGoalsRecvHome )
+    lNewScoreAway = Score( liMatchesAway, liPointsAway, liGoalsMadeAway, liGoalsRecvAway )
 
     self.mTeams.setScore( lsTeamHome, lNewScoreHome )
     self.mTeams.setScore( lsTeamAway, lNewScoreAway )
+
+    self.mTeams.addOpponent( lsTeamHome, lsTeamAway )
+    self.mTeams.addOpponent( lsTeamAway, lsTeamHome )
+
+
+
+  def processRoundSos( self ) :
+
+    print("====")
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
+    print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
+    for lsTeam in self.mTeams.mDict.keys() :
+      # TODO : ignore BYE if IGNORE/LOSS
+      #print( "calculating SOS for team %s" % lsTeam )
+      lListOpponents = self.mTeams.getOpponentsList( lsTeam )
+      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      liSOS = 0
+      for lsTeamOpp in lListOpponents :
+        lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
+        liPoints = lScoreOpp.miPoints
+        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        liSOS += liPoints
+        #print("-")
+      print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
+      liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
+      print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
+
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
+      self.mTeams.setScore( lsTeam, lNewScore )
+      #print("--")
 
 
 
@@ -462,7 +513,6 @@ class Macmahon :
       if lss[2] == "-" :
         teamHome = Macmahon.teamScore( lss[0], lss[1] )
         teamAway = Macmahon.teamScore( lss[3], lss[4] )
-        print( "--" )
 
     if teamHome == None and teamAway == None :
       print( "ERROR parsing match result" )
@@ -470,6 +520,7 @@ class Macmahon :
       sys.exit(1)
 
     self.processMatch(teamHome, teamAway)
+    print( "--" )
 
 
   def parseLine( self, sLine0 ) :
@@ -653,6 +704,7 @@ class Macmahon :
         print( "reached max round count %d, stopping .." % self.miOptCountRound )
         self.miRound -= 1
         break
+    self.processRoundSos()
     print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
       self.mFile.close()
