@@ -737,7 +737,7 @@ class Macmahon :
           print( "ERROR: %s not a valid number" %  lsVal )
           sys.exit(1)
         if self.miOptCountRound < 1 or self.miOptCountRound > 20 :
-          print( "ERROR: %d must have a value between 2 and 20" % self.miOptCountRound )
+          print( "ERROR: %d must have a value between 1 and 20" % self.miOptCountRound )
           sys.exit(1)
       elif lOpt[0] == '-f':
         lsVal = lOpt[1]
