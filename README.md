@@ -9,7 +9,7 @@ This may be useful to know, when not all games in sport leagues have been played
 The script allows several options for computing the ratings:
 
 - bye treatment: the byes can be treated as a LOSS/NOT-PLAYED/IGNORED, DRAW (a draw is awarded) and a WIN (a win is awarded).
-- sorting criteria: so far there are 3 possible options: REGULAR (ignoring MacMahon stuff), REGULARSOS (same as REGULAR but Macmahon's SOS is a tiebreaker) and WSOS (the score is the points + the weighted SOS).
+- sorting criteria: The most useful ones are REGULAR (ignoring MacMahon stuff) and WSOS (the score is the points + the weighted SOS), but there are a few more. See below for a detailed list.
 
 The input is a file with a list of the teams and the matches results, separated by rounds. See example in section _input_. And the output is a table with the games played, points, goals (scored, received, average), SOS, SOSOS and PhSOS (points + SOS/2). See example here (sorted by the REGULAR criterium):
 
@@ -60,12 +60,14 @@ The script accepts several command line options. Copying from the script:
   -O : same as -o but the name is assigned automatically based on the options given
   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-  -s <sort> : sort by one of (commas indicate tiebreakers):
+  -s <sort> : sort by one of (commas indicate tiebreakers). If not set, the order is undeterminated.
     * REGULAR : points, goal avg
     * REGULARSOS : points, SOS, SOSOS
+    * GOALAVG : goal avg, points
     * WSOS : weighted SOS = points + SOS/remaining rounds, points
     * SOS : SOS/SOSOS, points
     * SOSOS : SOSOS/SOS, points
+    * NAME : team name
   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
                 rounds, and WSOS does not matter (weights 0.00% in the last round)
   -c <round #> : count up to round #
@@ -163,3 +165,129 @@ Therefore, the team name in 1 word, and the result can be in several orders.
 
 In case a team is not played, it has to be matched against a team called `[BYE]`.
 
+
+## sample input file
+
+Follows an example input file with 9 teams (plus a required _BYE_ in the matches), no settings and 4 rounds.
+
+```
+junior
+athc
+egara
+valles
+iluro
+castelldefels
+polo
+terrassa
+linia22
+
+
+:settings
+
+
+# rounds have a list of previously declared teams and results can be
+# provided in several formats, like:
+# team1 1 - 0 team2
+# team1 1 - team2 0
+
+:round
+
+athc 0 - 0 valles
+junior 6 - 0 castelldefels
+polo 7 - 1 linia22
+iluro 1 - 7 egara
+[BYE] 0 - 0 terrassa
+
+
+:round
+
+castelldefels 1 - athc 6
+linia22 0 - junior 8
+egara 1 - polo 7
+terrassa 4 - iluro 1
+valles 0 - 0 [BYE]
+
+
+:round
+
+valles 2 - castelldefels 1
+athc 9 - linia22 1
+junior 5 - egara 1
+polo 3 - terrassa 3
+[BYE] 0 - 0 iluro
+
+
+:round
+
+linia22 2 - valles 3
+egara 0 - athc 3
+terrassa 0 - junior 1
+iluro 0 - polo 15
+castelldefels 0 - 0 [BYE]
+
+
+
+# optionally a set of 6 figures colon-separated means initial points:
+# points, SOS, SOSOS, SODOS, goals scored/received
+# this can be used for initial macmahon or as standings after last round
+
+junior
+athc
+egara
+valles
+iluro
+castelldefels
+polo
+terrassa
+linia22
+
+
+
+:settings
+
+# may include how to evaluate the ranking
+
+
+# rounds have a list of previously declared teams and results can be
+# provided in several formats, like:
+# team1 1 - 0 team2
+# team1 1 - team2 0
+# team1 vs team2 : 1 - 0
+# team1 - team2 : 1 - 0
+
+:round
+
+athc 0 - 0 valles
+junior 6 - 0 castelldefels
+polo 7 - 1 linia22
+iluro 1 - 7 egara
+[BYE] 0 - 0 terrassa
+
+
+:round
+
+castelldefels 1 - athc 6
+linia22 0 - junior 8
+egara 1 - polo 7
+terrassa 4 - iluro 1
+valles 0 - 0 [BYE]
+
+
+:round
+
+valles 2 - castelldefels 1
+athc 9 - linia22 1
+junior 5 - egara 1
+polo 3 - terrassa 3
+[BYE] 0 - 0 iluro
+
+
+:round
+
+linia22 2 - valles 3
+egara 0 - athc 3
+terrassa 0 - junior 1
+iluro 0 - polo 15
+castelldefels 0 - 0 [BYE]
+
+```
