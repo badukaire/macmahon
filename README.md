@@ -14,20 +14,20 @@ The script allows several options for computing the ratings:
 The input is a file with a list of the teams and the matches results, separated by rounds. See example in section _input_. And the output is a table with the games played, points, goals (scored, received, average), SOS, SOSOS and PhSOS (points + SOS/2). See example here (sorted by the REGULAR criterium):
 
 ```
-round 4 / 16  => w (weighted SOS) = 75% -- PwSOS = P + w * SOS
+round 4 / 8  => w (weighted SOS) = 50% -- PwSOS = P + w * SOS
 bye treatment: IGNORE
-sorting by: REGULAR
-teams           G  p |  GS -  GR = Gavg | SOS/SOSOS | PwSOS
--------------- ------|------------------|-----------|------
-junior          4 12 |  20 -   1 =  19  |   14   37 |  19
-polo            4 10 |  32 -   5 =  27  |    3   20 |  11
-athc            4 10 |  18 -   2 =  16  |   15   31 |  17
-valles          3  7 |   5 -   3 =   2  |   10   23 |  12
-terrassa        3  4 |   7 -   5 =   2  |   21   32 |  14
-egara           4  3 |   9 -  16 =  -7  |   16   31 |  11
-castelldefels   3  0 |   2 -  14 = -12  |    5    6 |   2
-linia22         4  0 |   4 -  27 = -23  |   12   19 |   6
-iluro           3  0 |   2 -  26 = -24  |   17   16 |   8
+sorting by: WSOS
+team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
+-------------- ------|-----------------|-----------|------
+athc            4 10 |  18 -   2 =  16 |   10  110 |  15
+junior          4 12 |  20 -   1 =  19 |    7  122 |  12
+polo            4 10 |  32 -   5 =  27 |    7  110 |  10
+valles          3  7 |   5 -   3 =   2 |   10   78 |   7
+terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
+castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
+egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
+linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
+iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
 ```
 
 ## concepts
