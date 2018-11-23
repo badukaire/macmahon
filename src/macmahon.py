@@ -359,6 +359,7 @@ class Macmahon :
         if self.miRound >= 1 :
           print( "processing SOS for round %d" % self.miRound )
           self.processRoundSos()
+          self.processRoundSosos()
           self.standings()
 
         self.miRound += 1
@@ -501,6 +502,31 @@ class Macmahon :
       print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
+      self.mTeams.setScore( lsTeam, lNewScore )
+      #print("--")
+
+
+
+  def processRoundSosos( self ) :
+
+    print("====")
+    print( "processRoundSosos, round %d" % ( self.miRound ) )
+    for lsTeam in self.mTeams.mDict.keys() :
+      # TODO : ignore BYE if IGNORE/LOSS
+      #print( "calculating SOS for team %s" % lsTeam )
+      lListOpponents = self.mTeams.getOpponentsList( lsTeam )
+      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      lScore = self.mTeams.mDict[ lsTeam ]
+      liSOSOS = 0
+      for lsTeamOpp in lListOpponents :
+        lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
+        liSOS = lScoreOpp.miSOS
+        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        liSOSOS += liSOS
+        #print("-")
+      print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
       #print("--")
 
@@ -705,6 +731,7 @@ class Macmahon :
         self.miRound -= 1
         break
     self.processRoundSos()
+    self.processRoundSosos()
     print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
       self.mFile.close()
