@@ -322,7 +322,6 @@ class Macmahon :
     self.miOptRounds = 0
     self.miOptCountRound = 0
 
-    self.miWeightedSOS = -1
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
 
@@ -647,10 +646,11 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
+    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
     print("round %d / %d  => w (weighted SOS) = %d%% -- PwSOS = P + w * SOS" % (
       self.miRound,
       self.miOptRounds if self.miOptRounds > 0 else self.miRound,
-      self.miWeightedSOS )
+      (liRounds - self.miRound) * 100 / liRounds )
     )
     self.displayBye()
     self.mTeams.sort( self.miOptSort )
