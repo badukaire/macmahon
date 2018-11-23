@@ -147,7 +147,8 @@ After the team declaration it is posssible to set some settings. This is not yet
 
 Then come the rounds, each one starting with the `:round` tag. The round number is never declared, it is calculated implicitly.
 
-In these rounds there are the matches. Each match consist
+The rounds consists of a set of lines, each one with a match result. The allowed formats are described below.
+
 
 ## match formats
 
@@ -159,4 +160,6 @@ In order to facilitate copying and pasting from web sites, the matches can be en
 - team1 - team2 : 1 - 0  : not yet implemented
 
 Therefore, the team name in 1 word, and the result can be in several orders.
+
+In case a team is not played, it has to be matched against a team called `[BYE]`.
 
