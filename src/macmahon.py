@@ -88,6 +88,7 @@ class Teams :
     self.mDict = dict()
     for lsTeam in self.mSet :
       self.mDict[ lsTeam ] = Score()
+    print("total number of added teams = %d" % len( self.mSet ) )
     self.mSet = None
     self.mListSortedTeams = None
 
@@ -345,7 +346,8 @@ class Macmahon :
       except :
         return None
 
-    print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    # TODO debug-level trace
+    # print( "team:%s, score:%d" % ( lsTeam, liScore ) )
     return lsTeam, liScore
 
 
@@ -355,7 +357,8 @@ class Macmahon :
     if lss[ 0 ] == Macmahon.TEXT_BYE :
       print( "error team %s is not a valid name (it is added automatically)" % lss[ 0 ] )
       sys.exit(1)
-    print( "adding team %s" % lss[ 0 ] )
+    # TODO debug-level trace
+    # print( "adding team %s" % lss[ 0 ] )
     if self.mTeams.add( lss[ 0 ] ) == 0 :
       print( "error adding team %s, was it already added?" % lss[ 0 ] )
       sys.exit(1)
