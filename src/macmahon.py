@@ -679,7 +679,7 @@ class Macmahon :
     if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
       lsName += "RAW_"
     else :
-      lsName = "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
+      lsName += "pos_" if self.miOptFormat == Macmahon.FORMAT_TABLE_POS else ""
 
     if self.miOptSort == Macmahon.SORT_NONE :
       lsName += "unsorted_"
