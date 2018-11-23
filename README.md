@@ -60,12 +60,14 @@ The script accepts several command line options. Copying from the script:
   -O : same as -o but the name is assigned automatically based on the options given
   -d <display> : display format: TABLE, TABLE_POS, SET, SET_GOALSFIRST
   -b <bye score> : bye score : IGNORE (reject game), DRAW (0-0), WIN (0-0)
-  -s <sort> : sort by one of (commas indicate tiebreakers):
+  -s <sort> : sort by one of (commas indicate tiebreakers). If not set, the order is undeterminated.
     * REGULAR : points, goal avg
     * REGULARSOS : points, SOS, SOSOS
+    * GOALAVG : goal avg, points
     * WSOS : weighted SOS = points + SOS/remaining rounds, points
     * SOS : SOS/SOSOS, points
     * SOSOS : SOSOS/SOS, points
+    * NAME : team name
   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
                 rounds, and WSOS does not matter (weights 0.00% in the last round)
   -c <round #> : count up to round #
