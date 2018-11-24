@@ -185,7 +185,7 @@ class Teams :
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
         reverse = True )
-    if iOptSort == Macmahon.SORT_GOALAVG :
+    elif iOptSort == Macmahon.SORT_GOALAVG :
       print( "sorting by: %s" % Macmahon.OPT_SORT_GOALAVG )
       self.mListSortedTeams = sorted(
         self.mDict,
