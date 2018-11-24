@@ -740,7 +740,7 @@ class Macmahon :
       try :
         self.mFile = open( self.msFile )
       except :
-        print( "FATAL, could not open file " + msFile )
+        print( "FATAL, could not open file " + self.msFile )
         sys.exit( 1 )
 
     liLines = 0
