@@ -622,6 +622,7 @@ class Macmahon :
       #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
       lScore = self.mTeams.mDict[ lsTeam ]
       liSOSOS = 0
+      liSODOS = 0
       for lsTeamOpp in lListOpponents :
         lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
         liSOS = lScoreOpp.miSOS
@@ -630,7 +631,7 @@ class Macmahon :
         #print("-")
       #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
 
-      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, liSODOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
       #print("--")
 
