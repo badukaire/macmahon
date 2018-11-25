@@ -246,15 +246,7 @@ class Settings :
 
 class Match :
 
-  def __init__( self ):
-
-    self.msHomeTeam = None
-    self.msAwayTeam = None
-    self.miHomeTeamGoals = None
-    self.miAwayTeamGoals = None
-
-
-  def set( self, sHomeTeam, sAwayTeam, iHomeTeamGoals, iAwayTeamGoals ) :
+  def __init__( self, sHomeTeam, sAwayTeam, iHomeTeamGoals, iAwayTeamGoals ) :
 
     self.msHomeTeam = sHomeTeam
     self.msAwayTeam = sAwayTeam
@@ -587,6 +579,7 @@ class Macmahon :
     self.mTeams.addOpponent( lsTeamHome, lsTeamAway )
     self.mTeams.addOpponent( lsTeamAway, lsTeamHome )
 
+    self.mCurrentRound.addMatch( Match( lsTeamHome, lsTeamAway, liGoalsHome, liGoalsAway ) )
 
 
   def processRoundSos( self ) :
