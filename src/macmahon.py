@@ -34,7 +34,7 @@ import getopt
 
 # TODO : move options treatment to Settings class?
 
-# TODO : fix doc -b => -s, sort => sorts, 'This may be' => 'The script may be', 'is not played' => 'is not playing'
+# TODO : fix doc -b => -s, s liSODOS,ort => sorts, 'This may be' => 'The script may be', 'is not played' => 'is not playing'
 # TODO : autoname should consider '\' as folders (os.name == 'nt' / 'posix')
 # TODO : implement weighted SODOS (draw*1, win*3)
 # TODO : consider setting the value of a win and a loss (0, 1, 2) instead of (0, 1, 3)
@@ -628,6 +628,11 @@ class Macmahon :
         liSOS = lScoreOpp.miSOS
         #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOSOS += liSOS
+
+        lMatch = self.mCurrentRound.getMatch( lsTeamOpp )
+        liWeightSODOS = lMatch.getTeamPointsInMatch( pMatch, sTeam )
+        liSODOS += liWeightSODOS * liSOS
+
         #print("-")
       #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
 
