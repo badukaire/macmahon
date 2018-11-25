@@ -47,7 +47,9 @@ import getopt
 
 gsVersion = "0.2.1"
 
-class Score :
+
+
+class Score : # TODO : rename as something like 'team data'
 
   gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOS[/D]OS | PwSOS"
   gsSepHdrShort1 = "------|-----------------|---------------|------"
@@ -241,8 +243,90 @@ class Teams :
 class Settings :
   pass
 
+
+class Match :
+
+  def __init__( self ):
+
+    self.msHomeTeam = None
+    self.msAwayTeam = None
+    self.miHomeTeamGoals = None
+    self.miAwayTeamGoals = None
+
+
+  def set( self, sHomeTeam, sAwayTeam, iHomeTeamGoals, iAwayTeamGoals ) :
+
+    self.msHomeTeam = sHomeTeam
+    self.msAwayTeam = sAwayTeam
+    self.miHomeTeamGoals = iHomeTeamGoals
+    self.miAwayTeamGoals = iAwayTeamGoals
+
+
+  @staticmethod
+  def isTeamHomeInMatch( pMatch, sTeam ) :
+    lbRet = False
+    if lMatch.msAwayTeam == sTeam :
+      lbRet = True
+
+  @staticmethod
+  def isTeamHomeInMatch( pMatch, sTeam ) :
+    lbRet = False
+    if lMatch.msHomeTeam == sTeam :
+      lbRet = True
+
+  @staticmethod
+  def isTeamInMatch( pMatch, sTeam ) :
+    lbRet = False
+    if lMatch.msHomeTeam == sTeam or lMatch.msAwayTeam == sTeam :
+      lbRet = True
+
+  # TODO : add more similar methods
+  @staticmethod
+  def isTeamWinnerInMatch( pMatch, sTeam ) :
+    lbRet = False
+    if Match.isTeamHomeInMatch( sTeam ) :
+      if lMatch.miHomeTeamGoals > lMatch.miAwayTeamGoals :
+        lbRet = True
+    elif Match.isTeamAwayInMatch( sTeam ) :
+      if lMatch.miHomeTeamGoals < lMatch.miAwayTeamGoals :
+        lbRet = True
+
+  @staticmethod
+  def getTeamPointsInMatch( pMatch, sTeam ) :
+    liRet = None
+    if Match.isTeamInMatch( sTeam ) :
+      if lMatch.miHomeTeamGoals == lMatch.miAwayTeamGoals : # draw
+        liRet = 1
+      else : # win / loss
+        if lMatch.miHomeTeamGoals > lMatch.miAwayTeamGoals : # home win
+          liRet = 3 if Match.isTeamHomeInMatch( sTeam ) else 0
+        else : # away win
+          liRet = 3 if Match.isTeamAwayInMatch( sTeam ) else 0
+
+
+
 class Round :
-  pass
+
+  def __init__( self ) :
+
+    self.miNumber = None
+    self.mListMatches = []
+
+
+  def addMatch( self, pMatch ) :
+
+    self.mListMatches.append( pMatch )
+
+
+  def getMatch( self, sTeam ) :
+
+    lRet = None
+    for lMatch in self.mListMatches :
+      if Match.isTeamInMatch( lMatch, sTeam ) :
+        lRet = lMatch
+        break
+    return lRet
+
 
 
 class Macmahon :
@@ -351,6 +435,8 @@ class Macmahon :
     self.miRound = 0
 
     self.mTeams = Teams()
+    self.mListRounds = []
+    self.mCurrentRound = None
 
 
 
@@ -387,6 +473,7 @@ class Macmahon :
           self.standings()
 
         self.miRound += 1
+        self.mListRounds.append( Round() ) # add to list of rounds
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
       self.mTeams.initialize()
@@ -754,6 +841,8 @@ class Macmahon :
       if not self.miOptCountRound == 0 and self.miRound > self.miOptCountRound :
         print( "reached max round count %d, stopping .." % self.miOptCountRound )
         self.miRound -= 1
+        # TODO : delete added round
+        # self.mListRounds. ...
         break
     self.processRoundSos()
     self.processRoundSosos()
