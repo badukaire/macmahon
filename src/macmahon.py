@@ -49,17 +49,17 @@ gsVersion = "0.2.1"
 
 class Score :
 
-  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS"
-  gsSepHdrShort1 = "------|-----------------|-----------|------"
-  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d"
+  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOS[/D]OS | PwSOS"
+  gsSepHdrShort1 = "------|-----------------|---------------|------"
+  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d %4d | %3d"
 
 
-  def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
+  def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iSODOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
     self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS )
 
 
-  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
+  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iSODOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
     self.miMatches = iMatches
     self.miPoints = iPoints
@@ -67,6 +67,7 @@ class Score :
     self.miGoalsRecv = iGoalsRecv
     self.miSOS = iSOS
     self.miSOSOS = iSOSOS
+    self.miSODOS = iSODOS
     self.miPointsPlusWeightedSOS = iPointsPlusWeightedSOS
 
 
@@ -80,6 +81,7 @@ class Score :
       pScore.miGoalsMade - pScore.miGoalsRecv,
       pScore.miSOS,
       pScore.miSOSOS,
+      pScore.miSODOS,
       pScore.miPointsPlusWeightedSOS
     )
 
@@ -648,9 +650,9 @@ class Macmahon :
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
       if bGoalsFirst == True :
-        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, 0, lScore.miPointsPlusWeightedSOS )
       else :
-        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, 0, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusWeightedSOS )
       print( lSet )
 
 
