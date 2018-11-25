@@ -4,7 +4,7 @@
 
 Script to compute standings on team sports (football, hockey, etc) using Macmahon scores with points, SOS, SOSOS, goals (scored &amp; received).
 
-This may be useful to know, when not all games in sport leagues have been played, which teams are performing better. It is not the same 2 wins against stronger teams than against weaker teams.
+This script may be useful in sport leagues, when not all games have been played, to know which teams are performing better. It is not the same 2 wins against stronger teams than 2 wins against weaker teams.
 
 The script allows several options for computing the ratings:
 
@@ -76,11 +76,11 @@ The script accepts several command line options. Copying from the script:
 
 ## examples
 
-The table above was generated with the following command, that sort with the regular way (points / goal average) and treats byes as losses (does not count them):
+The table above was generated with the following command, that sorts the regular way (points / goal average) and treats byes as losses (does not count them):
 ```bash
 python p.py -f ..\testData\test1.txt -d TABLE -s REGULAR -b IGNORE
 ```
-With the following command, the table is now sorted with points and the tiebreaker is the SOS score (option `-b REGULARSOS`):
+With the following command, the table is now sorted with points and the tiebreaker is the SOS score (option `-s REGULARSOS`):
 ```bash
 python p.py -f ..\testData\test1.txt -d TABLE -s REGULARSOS -b IGNORE
 ```
@@ -103,7 +103,7 @@ iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
 ```
 This changes something, but not much: Only 2 pairs of teams which were tied by points get their standings reverted. Which makes sense since you would score more goals to a weaker team. In other words, teams who score more is because have played against weaker teams.
 
-And now, this command sorts by _points + SOS/2_ (option `-b WSOS`):
+And now, this command sorts by _points + SOS/2_ (option `-s WSOS`):
 
 ```bash
 python p.py -f ..\testData\test1.txt -d TABLE -s WSOS -b IGNORE
@@ -163,7 +163,7 @@ In order to facilitate copying and pasting from web sites, the matches can be en
 
 Therefore, the team name in 1 word, and the result can be in several orders.
 
-In case a team is not played, it has to be matched against a team called `[BYE]`.
+In case a team is not playing, it has to be matched against a team called `[BYE]`.
 
 
 ## sample input file
