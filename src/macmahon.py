@@ -698,7 +698,7 @@ class Macmahon :
       lsName = "STDIN"
     else :
       lsName = os.path.basename( self.msFile )
-      lsName = lsName.split(".")[0] # remove extension
+      lsName = lsName.split(".")[0] # remove extension (TODO use splitext?)
     lsName += "_"
     if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
       lsName += "RAW_"
