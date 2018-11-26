@@ -58,7 +58,7 @@ class Score : # TODO : rename as something like 'team data'
 
   def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iSODOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
-    self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS )
+    self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iSODOS, iPointsPlusWeightedSOS )
 
 
   def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iSODOS = 0, iPointsPlusWeightedSOS = 0 ) :
