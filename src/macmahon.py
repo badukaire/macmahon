@@ -257,14 +257,14 @@ class Match :
   @staticmethod
   def isTeamHomeInMatch( pMatch, sTeam ) :
     lbRet = False
-    if pMatch.msAwayTeam == sTeam :
+    if pMatch.msHomeTeam == sTeam :
       lbRet = True
     return lbRet
 
   @staticmethod
-  def isTeamHomeInMatch( pMatch, sTeam ) :
+  def isTeamAwayInMatch( pMatch, sTeam ) :
     lbRet = False
-    if pMatch.msHomeTeam == sTeam :
+    if pMatch.msAwayTeam == sTeam :
       lbRet = True
     return lbRet
 
