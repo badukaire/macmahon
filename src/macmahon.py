@@ -55,6 +55,11 @@ class Log :
   mbDebug = False
 
   @staticmethod
+  def debugLog( sLogMsg ) :
+    if mbDebug :
+      print( sLogMsg )
+
+  @staticmethod
   def eprint( sErrorMsg ) :
     print( sErrorMsg, file=sys.stderr )
 
@@ -152,16 +157,16 @@ class Teams :
 
   def addOpponent( self, sTeam, sTeamOpponent ) :
 
-    #print("adding opponent for team %s : %s" % ( sTeam, sTeamOpponent ) )
+    Log.debugLog("adding opponent for team %s : %s" % ( sTeam, sTeamOpponent ) )
     try :
       lList = self.mDictOpponents[ sTeam ]
-      #print("  found %d opponents" % len(lList) )
+      Log.debugLog("  found %d opponents" % len(lList) )
     except :
-      #print("  no opponents found" )
+      Log.debugLog("  no opponents found" )
       lList = []
     lList.append( sTeamOpponent )
     self.mDictOpponents[ sTeam ] = lList
-    #print("  opponents now = %d" % len( self.mDictOpponents[ sTeam ] ) )
+    Log.debugLog("  opponents now = %d" % len( self.mDictOpponents[ sTeam ] ) )
 
     #self.mDictOpponents[ sTeam ] = [ sTeamOpponent, ]
 
@@ -330,7 +335,7 @@ class Macmahon :
   def usage() :
     liLine = 0
     print( "" )
-    #print( sys.argv[ 0 ] )
+    Log.debugLog( sys.argv[ 0 ] )
     lF = open( sys.argv[ 0 ], 'r' )
     lbFirstComm = True
     lsL = lF.readline()
@@ -413,7 +418,7 @@ class Macmahon :
       except :
         return None
 
-    #print( "team:%s, score:%d" % ( lsTeam, liScore ) )
+    Log.debugLog( "team:%s, score:%d" % ( lsTeam, liScore ) )
     return lsTeam, liScore
 
 
@@ -424,7 +429,6 @@ class Macmahon :
       print( "error team %s is not a valid name (it is added automatically)" % lss[ 0 ] )
       sys.exit(1)
     # TODO debug-level trace
-    # print( "adding team %s" % lss[ 0 ] )
     if self.mTeams.add( lss[ 0 ] ) == 0 :
       print( "error adding team %s, was it already added?" % lss[ 0 ] )
       sys.exit(1)
@@ -442,7 +446,7 @@ class Macmahon :
 
     if self.miOptBye == Macmahon.BYE_IGNORE :
       if Macmahon.TEXT_BYE in ( lsTeamHome, lsTeamAway ) :
-        #print( "BYE match, ignoring" )
+        Log.debugLog( "BYE match, ignoring" )
         return
 
     lScoreHome = self.mTeams.getScore( lsTeamHome )
@@ -509,55 +513,55 @@ class Macmahon :
 
   def processRoundSos( self ) :
 
-    #print("====")
+    Log.debugLog("====")
     liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
     liWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
-    #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
+    Log.debugLog( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
-      #print( "calculating SOS for team %s" % lsTeam )
+      Log.debugLog( "calculating SOS for team %s" % lsTeam )
       lListOpponents = self.mTeams.getOpponentsList( lsTeam )
-      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      Log.debugLog( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
       lScore = self.mTeams.mDict[ lsTeam ]
       liSOS = 0
       for lsTeamOpp in lListOpponents :
         lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
         liPoints = lScoreOpp.miPoints
-        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        Log.debugLog( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOS += liPoints
-        #print("-")
-      #print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
+        Log.debugLog("-")
+      Log.debugLog( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
       liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
-      #print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
+      Log.debugLog( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
-      #print("--")
+      Log.debugLog("--")
 
 
 
   def processRoundSosos( self ) :
 
-    #print("====")
-    #print( "processRoundSosos, round %d" % ( self.miRound ) )
+    Log.debugLog("====")
+    Log.debugLog( "processRoundSosos, round %d" % ( self.miRound ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
-      #print( "calculating SOS for team %s" % lsTeam )
+      Log.debugLog( "calculating SOS for team %s" % lsTeam )
       lListOpponents = self.mTeams.getOpponentsList( lsTeam )
-      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      Log.debugLog( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
       lScore = self.mTeams.mDict[ lsTeam ]
       liSOSOS = 0
       for lsTeamOpp in lListOpponents :
         lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
         liSOS = lScoreOpp.miSOS
-        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        Log.debugLog( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOSOS += liSOS
-        #print("-")
-      #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+        Log.debugLog("-")
+      Log.debugLog( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
-      #print("--")
+      Log.debugLog("--")
 
 
 
@@ -575,7 +579,7 @@ class Macmahon :
       sys.exit(1)
 
     self.processMatch(teamHome, teamAway)
-    #print( "--" )
+    Log.debugLog( "--" )
 
 
   def parseLine( self, sLine0 ) :
@@ -785,7 +789,7 @@ class Macmahon :
 
   def checkOptions( self, pListParams ) :
 
-    #print( "checkOptions, args:", pListParams )
+    Log.debugLog( "checkOptions, args:", pListParams )
     try:
       lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:Ohv' )
 
@@ -800,11 +804,11 @@ class Macmahon :
     """
     Macmahon.msFileInitialBalance = None
     """
-    #print( lOptList )
-    #print( lList )
+    Log.debugLog( lOptList )
+    Log.debugLog( lList )
     lDateRange = None
     for lOpt in lOptList :
-      #print( 'lOpt :' + str( lOpt ) )
+      Log.debugLog( 'lOpt :' + str( lOpt ) )
       if lOpt[0] == '-h' :
           print( "Displaying help, see README.md for more info." )
           Macmahon.usage()
