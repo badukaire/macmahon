@@ -20,6 +20,7 @@
 #:   -r <rounds> : number of league rounds - if not set it's assumed equal as the number of declared
 #:                 rounds, and WSOS does not matter (weights 0.00% in the last round)
 #:   -c <round #> : count up to round #
+#:   -v : activate verbose debug traces
 #:
 #: See the README.md file for information about the scoring system, its
 #: concepts like SOS, PwSOS etc, and the input format.
@@ -46,6 +47,17 @@ import getopt
 
 
 gsVersion = "0.2.1"
+
+
+
+class Log :
+
+  mbDebug = False
+
+  @staticmethod
+  def eprint( sErrorMsg ) :
+    print( sErrorMsg, file=sys.stderr )
+
 
 class Score :
 
@@ -350,11 +362,6 @@ class Macmahon :
 
     self.mTeams = Teams()
 
-
-
-  @staticmethod
-  def eprint( sErrorMsg ) :
-    print( sErrorMsg, file=sys.stderr )
 
 
   @staticmethod
@@ -780,12 +787,12 @@ class Macmahon :
 
     #print( "checkOptions, args:", pListParams )
     try:
-      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:Oh' )
+      lOptList, lList = getopt.getopt( pListParams, 'f:r:c:d:b:s:o:Ohv' )
 
     except getopt.GetoptError:
-      Macmahon.eprint( "FATAL : error analyzing command line options" )
-      Macmahon.eprint( "" )
-      Macmahon.usage()
+      Log.eprint( "FATAL : error analyzing command line options" )
+      Log.eprint( "" )
+      Log.usage()
       sys.exit( 1 )
 
     # TODO : use shift / setenv --
@@ -802,6 +809,9 @@ class Macmahon :
           print( "Displaying help, see README.md for more info." )
           Macmahon.usage()
           sys.exit( 0 )
+      elif lOpt[0] == '-v' :
+          print( "Enabling verbose debug traces." )
+          Log.mbDebug = true
       elif lOpt[0] == '-d' :
         lsVal = lOpt[1]
         if lsVal not in Macmahon.gOptDict_Format.keys() :
