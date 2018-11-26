@@ -296,6 +296,14 @@ class Match :
           liRet = 3 if Match.isTeamAwayInMatch( pMatch, sTeam ) else 0
 
 
+  def toString( self ) :
+
+    return "%d - %d [ %s vs %s ]" % (
+      self.miHomeTeamGoals,
+      self.miAwayTeamGoals,
+      self.msHomeTeam,
+      self.msAwayTeam )
+
 
 class Round :
 
