@@ -259,18 +259,21 @@ class Match :
     lbRet = False
     if pMatch.msAwayTeam == sTeam :
       lbRet = True
+    return lbRet
 
   @staticmethod
   def isTeamHomeInMatch( pMatch, sTeam ) :
     lbRet = False
     if pMatch.msHomeTeam == sTeam :
       lbRet = True
+    return lbRet
 
   @staticmethod
   def isTeamInMatch( pMatch, sTeam ) :
     lbRet = False
     if pMatch.msHomeTeam == sTeam or pMatch.msAwayTeam == sTeam :
       lbRet = True
+    return lbRet
 
   # TODO : add more similar methods
   @staticmethod
@@ -282,6 +285,7 @@ class Match :
     elif Match.isTeamAwayInMatch( pMatch, sTeam ) :
       if pMatch.miHomeTeamGoals < pMatch.miAwayTeamGoals :
         lbRet = True
+    return lbRet
 
   @staticmethod
   def getTeamPointsInMatch( pMatch, sTeam ) :
@@ -294,6 +298,7 @@ class Match :
           liRet = 3 if Match.isTeamHomeInMatch( pMatch, sTeam ) else 0
         else : # away win
           liRet = 3 if Match.isTeamAwayInMatch( pMatch, sTeam ) else 0
+    return liRet
 
 
   def toString( self ) :
