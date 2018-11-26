@@ -626,19 +626,24 @@ class Macmahon :
       for lsTeamOpp in lListOpponents :
         lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
         liSOS = lScoreOpp.miSOS
-        #print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
         liSOSOS += liSOS
 
         lMatch = self.mCurrentRound.getMatch( lsTeamOpp )
+        print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, str( lMatch ) ) )
+        
         liWeightSODOS = lMatch.getTeamPointsInMatch( pMatch, sTeam )
+        print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
         liSODOS += liWeightSODOS * liSOS
+        print( "  SODOS. SODOS => %d (+%d)" % ( liSODOS, liWeightSODOS ) )
 
-        #print("-")
-      #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+        print("-")
+      print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
+      print( "SODOS for team %s = %d" % ( lsTeam, liSODOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, liSODOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
-      #print("--")
+      print("--")
 
 
 
