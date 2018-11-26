@@ -678,7 +678,10 @@ class Macmahon :
       print( "SODOS for team %s = %d" % ( lsTeam, liSODOS ) )
 
       lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, liSODOS, lScore.miPointsPlusWeightedSOS )
+      print( lNewScore.toString() )
       self.mTeams.setScore( lsTeam, lNewScore )
+      lScoreGet = self.mTeams.getScore( lsTeam )
+      print( lScoreGet.toString() )
       print("--")
 
 
