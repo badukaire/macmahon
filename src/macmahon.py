@@ -649,7 +649,7 @@ class Macmahon :
           print("-")
           continue
 
-        print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, str( lMatch ) ) )
+        print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, lMatch.toString() ) )
         
         liWeightSODOS = Match.getTeamPointsInMatch( lMatch, lsTeam )
         print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
