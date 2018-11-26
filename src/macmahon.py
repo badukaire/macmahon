@@ -298,6 +298,9 @@ class Match :
           liRet = 3 if Match.isTeamHomeInMatch( pMatch, sTeam ) else 0
         else : # away win
           liRet = 3 if Match.isTeamAwayInMatch( pMatch, sTeam ) else 0
+    else :
+      print( "FATAL: Match.getTeamPointsInMatch, team %s not in match %s" % ( sTeam, pMatch.toString() ) )
+      sys.exit(1)
     return liRet
 
 
