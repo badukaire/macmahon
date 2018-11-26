@@ -619,7 +619,7 @@ class Macmahon :
       liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
       #print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
 
-      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, lScore.miSODOS, liWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
       #print("--")
 
@@ -760,9 +760,9 @@ class Macmahon :
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
       if bGoalsFirst == True :
-        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, 0, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miSODOS, lScore.miPointsPlusWeightedSOS )
       else :
-        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, 0, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miSODOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusWeightedSOS )
       print( lSet )
 
 
