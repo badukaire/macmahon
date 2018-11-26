@@ -73,6 +73,20 @@ class Score : # TODO : rename as something like 'team data'
     self.miPointsPlusWeightedSOS = iPointsPlusWeightedSOS
 
 
+  def toString( self ) :
+
+    return "m:%d p:%d GS:%d GR:%d SOS:%d SOSOS:%d SODOS:%d PwSOS:%s" % (
+      self.miMatches,
+      self.miPoints,
+      self.miGoalsMade,
+      self.miGoalsRecv,
+      self.miSOS,
+      self.miSOSOS,
+      self.miSODOS,
+      self.miPointsPlusWeightedSOS,
+    )
+
+
   @staticmethod
   def textFormat_short1( pScore ) :
     return Score.gsFormatShort1 % (
