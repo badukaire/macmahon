@@ -51,8 +51,8 @@ gsVersion = "0.2.1"
 
 class Score : # TODO : rename as something like 'team data'
 
-  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOS[/D]OS | PwSOS"
-  gsSepHdrShort1 = "------|-----------------|---------------|------"
+  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS, SO[S/D]OS | PwSOS"
+  gsSepHdrShort1 = "------|-----------------|----------------|------"
   gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d %4d | %3d"
 
 
@@ -257,43 +257,43 @@ class Match :
   @staticmethod
   def isTeamHomeInMatch( pMatch, sTeam ) :
     lbRet = False
-    if lMatch.msAwayTeam == sTeam :
+    if pMatch.msAwayTeam == sTeam :
       lbRet = True
 
   @staticmethod
   def isTeamHomeInMatch( pMatch, sTeam ) :
     lbRet = False
-    if lMatch.msHomeTeam == sTeam :
+    if pMatch.msHomeTeam == sTeam :
       lbRet = True
 
   @staticmethod
   def isTeamInMatch( pMatch, sTeam ) :
     lbRet = False
-    if lMatch.msHomeTeam == sTeam or lMatch.msAwayTeam == sTeam :
+    if pMatch.msHomeTeam == sTeam or pMatch.msAwayTeam == sTeam :
       lbRet = True
 
   # TODO : add more similar methods
   @staticmethod
   def isTeamWinnerInMatch( pMatch, sTeam ) :
     lbRet = False
-    if Match.isTeamHomeInMatch( sTeam ) :
-      if lMatch.miHomeTeamGoals > lMatch.miAwayTeamGoals :
+    if Match.isTeamHomeInMatch( pMatch, sTeam ) :
+      if pMatch.miHomeTeamGoals > pMatch.miAwayTeamGoals :
         lbRet = True
-    elif Match.isTeamAwayInMatch( sTeam ) :
-      if lMatch.miHomeTeamGoals < lMatch.miAwayTeamGoals :
+    elif Match.isTeamAwayInMatch( pMatch, sTeam ) :
+      if pMatch.miHomeTeamGoals < pMatch.miAwayTeamGoals :
         lbRet = True
 
   @staticmethod
   def getTeamPointsInMatch( pMatch, sTeam ) :
     liRet = None
-    if Match.isTeamInMatch( sTeam ) :
-      if lMatch.miHomeTeamGoals == lMatch.miAwayTeamGoals : # draw
+    if Match.isTeamInMatch( pMatch, sTeam ) :
+      if pMatch.miHomeTeamGoals == pMatch.miAwayTeamGoals : # draw
         liRet = 1
       else : # win / loss
-        if lMatch.miHomeTeamGoals > lMatch.miAwayTeamGoals : # home win
-          liRet = 3 if Match.isTeamHomeInMatch( sTeam ) else 0
+        if pMatch.miHomeTeamGoals > pMatch.miAwayTeamGoals : # home win
+          liRet = 3 if Match.isTeamHomeInMatch( pMatch, sTeam ) else 0
         else : # away win
-          liRet = 3 if Match.isTeamAwayInMatch( sTeam ) else 0
+          liRet = 3 if Match.isTeamAwayInMatch( pMatch, sTeam ) else 0
 
 
 
@@ -465,7 +465,8 @@ class Macmahon :
           self.standings()
 
         self.miRound += 1
-        self.mListRounds.append( Round() ) # add to list of rounds
+        self.mCurrentRound = Round()
+        self.mListRounds.append( self.mCurrentRound ) # add to list of rounds
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
       self.mTeams.initialize()
@@ -626,13 +627,18 @@ class Macmahon :
       for lsTeamOpp in lListOpponents :
         lScoreOpp = self.mTeams.mDict[ lsTeamOpp ]
         liSOS = lScoreOpp.miSOS
-        print( "  point of opponent %s: %d" % ( lsTeamOpp, liPoints ) )
+        print( "  SOS of opponent %s: %d" % ( lsTeamOpp, liSOS ) )
         liSOSOS += liSOS
 
         lMatch = self.mCurrentRound.getMatch( lsTeamOpp )
+        if lMatch == None :
+          print( "  SODOS. NO match found with opponent %s for team %s" % ( lsTeamOpp, lsTeam ) )
+          print("-")
+          continue
+
         print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, str( lMatch ) ) )
         
-        liWeightSODOS = lMatch.getTeamPointsInMatch( pMatch, sTeam )
+        liWeightSODOS = Match.getTeamPointsInMatch( lMatch, lsTeam )
         print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
         liSODOS += liWeightSODOS * liSOS
         print( "  SODOS. SODOS => %d (+%d)" % ( liSODOS, liWeightSODOS ) )
