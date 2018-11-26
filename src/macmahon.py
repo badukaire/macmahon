@@ -27,6 +27,7 @@
 from __future__ import print_function
 
 import sys
+import os
 import getopt
 
 # TODO : use log print / error wrappers
@@ -696,7 +697,7 @@ class Macmahon :
     if self.msFile == None :
       lsName = "STDIN"
     else :
-      lsName = self.msFile.split("/")[-1] # remove directories
+      lsName = os.path.basename( self.msFile )
       lsName = lsName.split(".")[0] # remove extension
     lsName += "_"
     if not self.miOptFormat == Macmahon.FORMAT_TABLE and not self.miOptFormat == Macmahon.FORMAT_TABLE_POS :
