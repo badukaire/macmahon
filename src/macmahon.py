@@ -44,6 +44,13 @@ import getopt
 # TODO : allow long team names, with more than 1 word
 # TODO : allow team names with unicode
 
+# TODO : output tables:
+# - very short: only goals
+# - short: goals + SOS + PwSOS
+# - extended: goals + SOS + SOSOS + PwSOS
+# - extended2: goals + SOS + SODOS +SODOS + PwSOS
+# - detailed: with pairings
+
 
 gsVersion = "0.2.1"
 
