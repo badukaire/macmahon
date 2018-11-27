@@ -19,15 +19,15 @@ bye treatment: IGNORE
 sorting by: REGULAR
 team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
 -------------- ------|-----------------|-----------|------
-junior          4 12 |  20 -   1 =  19 |    7  122 |  12
-polo            4 10 |  32 -   5 =  27 |    7  110 |  10
-athc            4 10 |  18 -   2 =  16 |   10  110 |  15
-valles          3  7 |   5 -   3 =   2 |   10   78 |   7
-terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
-egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
-castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
-linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
-iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
+blue            4 12 |  20 -   1 =  19 |    7  122 |  12
+white           4 10 |  32 -   5 =  27 |    7  110 |  10
+yellow          4 10 |  18 -   2 =  16 |   10  110 |  10
+black           3  7 |   5 -   3 =   2 |   10   78 |   7
+redwhite        3  4 |   7 -   5 =   2 |   22   31 |   4
+bluewhite       4  3 |   9 -  16 =  -7 |   32   41 |   3
+redblack        3  0 |   2 -  14 = -12 |   29   27 |   3
+green           4  0 |   4 -  27 = -23 |   39   34 |   1
+orange          3  0 |   2 -  26 = -24 |   17   61 |   1
 ```
 
 ## concepts
@@ -91,15 +91,15 @@ bye treatment: IGNORE
 sorting by: REGULARSOS
 team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
 -------------- ------|-----------------|-----------|------
-junior          4 12 |  20 -   1 =  19 |    7  122 |  12
-athc            4 10 |  18 -   2 =  16 |   10  110 |  15
-polo            4 10 |  32 -   5 =  27 |    7  110 |  10
-valles          3  7 |   5 -   3 =   2 |   10   78 |   7
-terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
-egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
-linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
-castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
-iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
+blue            4 12 |  20 -   1 =  19 |    7  122 |  12
+yellow          4 10 |  18 -   2 =  16 |   10  110 |  10
+white           4 10 |  32 -   5 =  27 |    7  110 |  10
+black           3  7 |   5 -   3 =   2 |   10   78 |   7
+redwhite        3  4 |   7 -   5 =   2 |   22   31 |   4
+bluewhite       4  3 |   9 -  16 =  -7 |   32   41 |   3
+green           4  0 |   4 -  27 = -23 |   39   34 |   1
+redblack        3  0 |   2 -  14 = -12 |   29   27 |   3
+orange          3  0 |   2 -  26 = -24 |   17   61 |   1
 ```
 This changes something, but not much: Only 2 pairs of teams which were tied by points get their standings reverted. Which makes sense since you would score more goals to a weaker team. In other words, teams who score more is because have played against weaker teams.
 
@@ -115,15 +115,15 @@ bye treatment: IGNORE
 sorting by: WSOS
 team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS
 -------------- ------|-----------------|-----------|------
-athc            4 10 |  18 -   2 =  16 |   10  110 |  15
-junior          4 12 |  20 -   1 =  19 |    7  122 |  12
-polo            4 10 |  32 -   5 =  27 |    7  110 |  10
-valles          3  7 |   5 -   3 =   2 |   10   78 |   7
-terrassa        3  4 |   7 -   5 =   2 |   22   31 |   5
-castelldefels   3  0 |   2 -  14 = -12 |   29   27 |   4
-egara           4  3 |   9 -  16 =  -7 |   32   41 |   3
-linia22         4  0 |   4 -  27 = -23 |   39   34 |   1
-iluro           3  0 |   2 -  26 = -24 |   17   61 |   0
+blue            4 12 |  20 -   1 =  19 |    7  122 |  12
+yellow          4 10 |  18 -   2 =  16 |   10  110 |  10
+white           4 10 |  32 -   5 =  27 |    7  110 |  10
+black           3  7 |   5 -   3 =   2 |   10   78 |   7
+redwhite        3  4 |   7 -   5 =   2 |   22   31 |   4
+bluewhite       4  3 |   9 -  16 =  -7 |   32   41 |   3
+redblack        3  0 |   2 -  14 = -12 |   29   27 |   3
+green           4  0 |   4 -  27 = -23 |   39   34 |   1
+orange          3  0 |   2 -  26 = -24 |   17   61 |   1
 ```
 It can be seen that amongst other things, the team was 2nd in the first table, has gone down to the 3rd place, and the team that was 3rd is now 1st.
 
