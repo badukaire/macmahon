@@ -42,7 +42,7 @@ import getopt
 # TODO : allow team names with unicode
 
 
-gsVersion = "0.2.1"
+gsVersion = "0.2.2"
 
 class Score :
 
