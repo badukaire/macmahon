@@ -675,6 +675,8 @@ class Macmahon :
 
         print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, lMatch.toString() ) )
         
+        if not Match.isTeamInMatch( lMatch, lsTeam ) :
+	  continue
         liWeightSODOS = Match.getTeamPointsInMatch( lMatch, lsTeam )
         print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
         liSODOS += liWeightSODOS * liSOS
