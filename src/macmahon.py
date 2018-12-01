@@ -679,8 +679,9 @@ class Macmahon :
 	  continue
         liWeightSODOS = Match.getTeamPointsInMatch( lMatch, lsTeam )
         print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
+        liSODOSold = liSODOS
         liSODOS += liWeightSODOS * liSOS
-        print( "  SODOS. SODOS => %d (+%d)" % ( liSODOS, liWeightSODOS ) )
+        print( "  SODOS. SODOS %d => %d (+ %d * %d)" % ( liSODOSold, liSODOS, liWeightSODOS, liSOS) )
 
         print("-")
       print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
