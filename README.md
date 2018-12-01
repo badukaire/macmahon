@@ -36,7 +36,7 @@ The MacMahon scoring system was invented by Lee MacMahon for improving the quali
 
 In competitions where a league is played, at the end these scores are not useful, but in the early rounds it can be useful to know which teams have lower or greater potential. This is achieved by considering the SOS.
 
-The SOS (Sum of Opponents Scores) is the sum of points of all the opponents a team (or player) has played.
+The SOS (Sum of Opponents Scores) is the sum of points of all the opponents a team (or player) has played. It is an indicator of the difficulty of the games that a team has played so far. A higher SOS means harder opponents. It is specially useful in earlier rounds to see the potential of a team.
 
 A example is useful to understand it and how it is useful: If in round 2 of a league there is a team A with (4 points) has played against team B (with 2 points) and team C (with 5 points), team A's SOS will be 2 + 5 = 7. Then if there is a team F (also with 4 points as team A) which has played against team G (with 1 point) and team H (with 0 points), its SOS will be 1 + 0 = 1.
 
