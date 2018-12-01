@@ -72,3 +72,11 @@ junior 3 - 0 iluro
 [BYE] 0 - 0 polo
 
 
+:round
+
+egara 5 - 1 castelldefels
+terrassa 2 - 2 valles
+iluro 1 - 11 athc
+polo  1 - 1 junior
+
+
