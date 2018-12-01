@@ -651,13 +651,13 @@ class Macmahon :
 
   def processRoundSosos( self ) :
 
-    #print("====")
-    #print( "processRoundSosos, round %d" % ( self.miRound ) )
+    print("====")
+    print( "processRoundSosos, round %d" % ( self.miRound ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
-      #print( "calculating SOS for team %s" % lsTeam )
+      print( "calculating SOSOS & SODOS for team %s" % lsTeam )
       lListOpponents = self.mTeams.getOpponentsList( lsTeam )
-      #print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
+      print( "has played against %d teams: %s" % ( len( lListOpponents ), str( lListOpponents ) ) )
       lScore = self.mTeams.mDict[ lsTeam ]
       liSOSOS = 0
       liSODOS = 0
