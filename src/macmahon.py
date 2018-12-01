@@ -1,3 +1,6 @@
+# TODO SODOS not working!!! getting higher then going down, there are some errors handling the rounds data
+
+
 #: processes a set of teams, settings and rounds and displays the standings according
 #: to the settings
 #:
@@ -501,9 +504,12 @@ class Macmahon :
           self.processRoundSosos()
           self.standings()
 
-        self.miRound += 1
-        self.mCurrentRound = Round()
-        self.mListRounds.append( self.mCurrentRound ) # add to list of rounds
+	if not self.miOptCountRound == 0 and self.miRound == self.miOptCountRound :
+	  print( "max round count %d was already reached, ignoring and quitting ..." % self.miOptCountRound )
+        else :
+          self.miRound += 1
+          self.mCurrentRound = Round()
+          self.mListRounds.append( self.mCurrentRound ) # add to list of rounds
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
       self.mTeams.initialize()
@@ -891,11 +897,9 @@ class Macmahon :
     for lsLine in self.mFile :
       liLines += 1
       liErrors += self.parseLine( lsLine )
-      if not self.miOptCountRound == 0 and self.miRound > self.miOptCountRound :
+      if not self.miOptCountRound == 0 and self.miRound >= self.miOptCountRound :
         print( "reached max round count %d, stopping .." % self.miOptCountRound )
-        self.miRound -= 1
-        # TODO : delete added round
-        # self.mListRounds. ...
+        #self.miRound -= 1
         break
     self.processRoundSos()
     self.processRoundSosos()
