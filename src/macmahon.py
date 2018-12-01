@@ -671,12 +671,13 @@ class Macmahon :
         if lMatch == None :
           print( "  SODOS. NO match found with opponent %s for team %s" % ( lsTeamOpp, lsTeam ) )
           print("-")
+          # TODO dont continue? otherwise no points are added ever (Score)
           continue
 
         print( "  SODOS. match of opponent %s: %s" % ( lsTeamOpp, lMatch.toString() ) )
         
         if not Match.isTeamInMatch( lMatch, lsTeam ) :
-	  continue
+          continue
         liWeightSODOS = Match.getTeamPointsInMatch( lMatch, lsTeam )
         print( "  SODOS. match points against opponent %s: %d" % ( lsTeamOpp, liWeightSODOS ) )
         liSODOSold = liSODOS
