@@ -63,6 +63,7 @@ iluro 0 - polo 15
 castelldefels 0 - 0 [BYE]
 
 
+#J5
 :round
 
 castelldefels 3 - 0 linia22
@@ -78,5 +79,16 @@ egara 5 - 1 castelldefels
 terrassa 2 - 2 valles
 iluro 1 - 11 athc
 polo  1 - 1 junior
+linia22 0 - 0 [BYE]
+
+
+#J7
+:round
+
+linia22 2 - 3 egara
+castelldefels 1 - 1 terrassa
+valles 5 - 0 iluro
+athc 3 - 2 polo
+[BYE] 0 - 0 junior
 
 

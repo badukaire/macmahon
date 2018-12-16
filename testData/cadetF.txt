@@ -14,3 +14,19 @@ TERRASSA 5 - 0 VALLES
 JUNIOR 2 - 2 EGARA
 
 
+
+:round
+
+POLO 1 - 4 JUNIOR
+VALLES 1 - 2 ATHC
+EGARA 1 - 1 TERRASSA
+
+
+:round
+
+POLO 5 - 2 VALLES
+# fake result
+ATHC 0 - 0 EGARA
+JUNIOR 3 - 0 TERRASSA
+
+
