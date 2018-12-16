@@ -3,15 +3,15 @@
 # points, SOS, SOSOS, SODOS, goals scored/received
 # this can be used for initial macmahon or as standings after last round
 
-blue
-yellow
-bluewhite
-black
-orange
-redblack
-white
-redwhite
-green
+junior
+athc
+egara
+valles
+iluro
+castelldefels
+polo
+terrassa
+linia22
 
 
 
@@ -29,38 +29,38 @@ green
 
 :round
 
-yellow 0 - 0 black
-blue 6 - 0 redblack
-white 7 - 1 green
-orange 1 - 7 bluewhite
-[BYE] 0 - 0 redwhite
+athc 0 - 0 valles
+junior 6 - 0 castelldefels
+polo 7 - 1 linia22
+iluro 1 - 7 egara
+[BYE] 0 - 0 terrassa
 
 
 :round
 
-redblack 1 - yellow 6
-green 0 - blue 8
-bluewhite 1 - white 7
-redwhite 4 - orange 1
-black 0 - 0 [BYE]
+castelldefels 1 - athc 6
+linia22 0 - junior 8
+egara 1 - polo 7
+terrassa 4 - iluro 1
+valles 0 - 0 [BYE]
 
 
 :round
 
-black 2 - redblack 1
-yellow 9 - green 1
-blue 5 - bluewhite 1
-white 3 - redwhite 3
-[BYE] 0 - 0 orange
+valles 2 - castelldefels 1
+athc 9 - linia22 1
+junior 5 - egara 1
+polo 3 - terrassa 3
+[BYE] 0 - 0 iluro
 
 
 :round
 
-green 2 - black 3
-bluewhite 0 - yellow 3
-redwhite 0 - blue 1
-orange 0 - white 15
-redblack 0 - 0 [BYE]
+linia22 2 - valles 3
+egara 0 - athc 3
+terrassa 0 - junior 1
+iluro 0 - polo 15
+castelldefels 0 - 0 [BYE]
 
 
 
