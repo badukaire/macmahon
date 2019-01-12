@@ -92,3 +92,13 @@ athc 3 - 2 polo
 [BYE] 0 - 0 junior
 
 
+#J8
+:round
+
+junior 2 - 5 athc
+egara - [BYE]
+terrassa 2 - 1 linia22
+polo 0 - 2 valles
+iluro 0 - 7 castelldefels
+
+
