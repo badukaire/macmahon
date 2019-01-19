@@ -102,3 +102,13 @@ polo 0 - 2 valles
 iluro 0 - 7 castelldefels
 
 
+#J9
+:round
+
+valles 1 - 3 junior
+athc 0 - 0 [BYE]
+egara 5 - 3 terrassa
+linia22 7 - 0 iluro
+castelldefels 3 - 6 polo
+
+
