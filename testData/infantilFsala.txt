@@ -16,8 +16,4 @@ athc1952
 
 :round
 
-athc 5 - 0 athc1952
-egara 3 - 1 terrassa
-castelldefels 1 - junior 7
-polo 0 - 1 valles
 
