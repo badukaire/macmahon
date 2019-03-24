@@ -1,0 +1,55 @@
+:round
+
+athc 5 - 0 at1952
+egara 3 - 1 terrassa
+castelldefels 1 - 7 junior
+polo 0 - 1 valles
+
+
+:round
+
+at1952 1 - 4 polo
+terrassa 1 - 5 athc
+junior 3 - 1 egara
+valles 4 - 1 castelldefels
+
+
+:round
+
+terrassa 7 - 1 at1952
+athc 2 - 2 junior
+polo 0 - 2 egara
+= valles - castell ???
+
+
+:round
+
+egara 3 - 0 valles
+polo 3 - 1 castelldefels
+junior 7 - 1 at1952
+= athc - terrassa
+
+
+:round
+
+valles 1 - 2 athc
+castelldefels 1 - 2 egara
+terrassa 1 - 1 junior
+= 1952 - polo
+
+
+:round
+
+at1952 0 - 1 valles
+athc 4 - 1 castelldefels
+terrassa 4 - 1 polo
+= egara - junior ???
+
+
+:round
+
+polo 4 - 4 junior
+
+
+:round
+
