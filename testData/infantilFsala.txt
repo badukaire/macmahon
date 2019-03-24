@@ -30,6 +30,7 @@ junior 3 - 1 egara
 valles 4 - 1 castelldefels
 terrassa 7 - 1 athc1952
 athc 2 - 2 junior
+polo 0 - 2 egara
 egara 3 - 0 valles
 polo 3 - 1 castelldefels
 junior 7 - 1 athc1952
