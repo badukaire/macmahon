@@ -51,11 +51,11 @@ castelldefels 1 - 2 egara
 terrassa 1 - 1 junior
 athc1952 0 - 1 valles
 athc 4 - 1 castelldefels
-polo 4 - 4 junior
 
 
 :round
 
+polo 4 - 4 junior
 
 
 
