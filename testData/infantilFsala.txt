@@ -14,80 +14,10 @@ athc1952
 
 
 
-:settings
-
-# may include how to evaluate the ranking
-
-
-# rounds have a list of previously declared teams and results can be
-# provided in several formats, like:
-# team1 1 - 0 team2
-# team1 1 - team2 0
-# team1 vs team2 : 1 - 0
-# team1 - team2 : 1 - 0
-
 :round
 
 athc 5 - 0 athc1952
 egara 3 - 1 terrassa
 castelldefels 1 - junior 7
 polo 0 - 1 valles
-
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
-:round
-
-athc 0 - 0 valles
-junior 6 - 0 castelldefels
-polo 7 - 1 
-1 - 7 egara
-[BYE] 0 - 0 terrassa
-
 
