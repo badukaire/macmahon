@@ -47,9 +47,9 @@ gsVersion = "0.2.2"
 
 class Score :
 
-  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS"
-  gsSepHdrShort1 = "------|-----------------|-----------|------"
-  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d"
+  gsHeaderShort1 = " G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS | wSOS  |"
+  gsSepHdrShort1 = "------|-----------------|-----------|-------|-------|"
+  gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d   | (+%2d) |"
 
 
   def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iWeightedSOS = 0, iPointsPlusWeightedSOS = 0 ) :
