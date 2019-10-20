@@ -52,12 +52,12 @@ class Score :
   gsFormatShort1 = "%2d %2d | %3d - %3d = %3d | %4d %4d | %3d"
 
 
-  def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
+  def __init__( self, iMatches = 0, iPoints = 0, iGoalsMade = 0, iGoalsRecv = 0, iSOS = 0, iSOSOS = 0, iWeightedSOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
-    self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iPointsPlusWeightedSOS )
+    self.set( iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS, iSOSOS, iWeightedSOS, iPointsPlusWeightedSOS )
 
 
-  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iPointsPlusWeightedSOS = 0 ) :
+  def set( self, iMatches, iPoints, iGoalsMade, iGoalsRecv, iSOS = 0, iSOSOS = 0, iWeightedSOS = 0, iPointsPlusWeightedSOS = 0 ) :
 
     self.miMatches = iMatches
     self.miPoints = iPoints
@@ -65,6 +65,7 @@ class Score :
     self.miGoalsRecv = iGoalsRecv
     self.miSOS = iSOS
     self.miSOSOS = iSOSOS
+    self.miWeightedSOS = iWeightedSOS
     self.miPointsPlusWeightedSOS = iPointsPlusWeightedSOS
 
 
@@ -78,7 +79,8 @@ class Score :
       pScore.miGoalsMade - pScore.miGoalsRecv,
       pScore.miSOS,
       pScore.miSOSOS,
-      pScore.miPointsPlusWeightedSOS
+      pScore.miPointsPlusWeightedSOS,
+      pScore.miWeightedSOS,
     )
 
 
@@ -502,8 +504,8 @@ class Macmahon :
 
     #print("====")
     liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
-    liWeightedSOS = (liRounds - self.miRound) * 100 / liRounds
-    #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liWeightedSOS ) )
+    liSosWeight = (liRounds - self.miRound) * 100 / liRounds
+    #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liSosWeight ) )
     for lsTeam in self.mTeams.mDict.keys() :
       # TODO : ignore BYE if IGNORE/LOSS
       #print( "calculating SOS for team %s" % lsTeam )
@@ -518,10 +520,11 @@ class Macmahon :
         liSOS += liPoints
         #print("-")
       #print( "SOS for team %s = %d" % ( lsTeam, liSOS ) )
-      liWeightedSOS = lScore.miPoints + ( liWeightedSOS * liSOS ) / 100
+      liWeightedSOS = ( liSosWeight * liSOS ) / 100
+      liPointsPlusWeightedSOS = lScore.miPoints + liWeightedSOS
       #print( "WSOS for team %s = %d" % ( lsTeam, liWeightedSOS ) )
 
-      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS )
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, liSOS, 0, liWeightedSOS, liPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
       #print("--")
 
@@ -546,7 +549,7 @@ class Macmahon :
         #print("-")
       #print( "SOSOS for team %s = %d" % ( lsTeam, liSOSOS ) )
 
-      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miPointsPlusWeightedSOS )
+      lNewScore = Score( lScore.miMatches, lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, liSOSOS, lScore.miWeightedSOS, lScore.miPointsPlusWeightedSOS )
       self.mTeams.setScore( lsTeam, lNewScore )
       #print("--")
 
@@ -646,9 +649,9 @@ class Macmahon :
       print( lsTeam )
       lScore = self.mTeams.mDict[ lsTeam ]
       if bGoalsFirst == True :
-        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miSOS, lScore.miSOSOS, lScore.miWeightedSOS, lScore.miPointsPlusWeightedSOS )
       else :
-        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miPointsPlusWeightedSOS )
+        lSet = ( lScore.miPoints, lScore.miSOS, lScore.miSOSOS, lScore.miGoalsMade, lScore.miGoalsRecv, lScore.miWeightedSOS, lScore.miPointsPlusWeightedSOS )
       print( lSet )
 
 
