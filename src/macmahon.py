@@ -13,7 +13,7 @@
 #:     * REGULAR : points, goal avg
 #:     * REGULARSOS : points, SOS, SOSOS
 #:     * GOALAVG : goal avg, points
-#:     * WSOS : weighted SOS = points + SOS/remaining rounds, points
+#:     * WSOS : weighted SOS => points + SOS/remaining rounds, points, SOS, WSOS
 #:     * SOS : SOS/SOSOS, points
 #:     * SOSOS : SOSOS/SOS, points
 #:     * NAME : team name
@@ -202,6 +202,7 @@ class Teams :
           self.mDict[ team ].miPointsPlusWeightedSOS,
           self.mDict[ team ].miPoints,
           self.mDict[ team ].miSOS,
+          self.mDict[ team ].miWeightedSOS,
           self.mDict[ team ].miSOSOS,
           self.mDict[ team ].miGoalsMade - self.mDict[ team ].miGoalsRecv,
         ),
