@@ -753,9 +753,11 @@ class Macmahon :
         break
     self.processRoundSos()
     self.processRoundSosos()
-    print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
     if not self.msFile == None :
+      print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
       self.mFile.close()
+    else :
+      print( "stdin processed, lines=%d, lines with errors: %d" % ( liLines, liErrors ) )
 
 
   def readBalance( self, sFile ) :
