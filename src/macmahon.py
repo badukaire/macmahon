@@ -30,6 +30,8 @@ import sys
 import os
 import getopt
 
+# TODO : dont allow a BYE team if number of teams is even
+
 # TODO : use log print / error wrappers
 # TODO : add option for being silent (using the log wrappers)
 
