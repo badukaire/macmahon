@@ -380,7 +380,7 @@ class Macmahon :
         self.miState = iState
 
         if self.miRound >= 1 :
-          print( "processing SOS for round %d" % self.miRound )
+          #print( "processing SOS for round %d" % self.miRound )
           self.processRoundSos()
           self.processRoundSosos()
           self.standings()
@@ -600,7 +600,8 @@ class Macmahon :
         if lbState :
           print( "ERROR changing to state %s" % lss[ 0 ] )
         else :
-          print( "changed to state %s" % lss[ 0 ] )
+          pass
+          #print( "changed to state %s" % lss[ 0 ] )
       else : # content
         if self.miState == Macmahon.STATE_TEAMS :
           self.parseLineTeam( lsL )
@@ -757,6 +758,7 @@ class Macmahon :
         break
     self.processRoundSos()
     self.processRoundSosos()
+    print( "=======" )
     if not self.msFile == None :
       print( "file %s processed, lines=%d, lines with errors: %d" % ( self.msFile, liLines, liErrors ) )
       self.mFile.close()
