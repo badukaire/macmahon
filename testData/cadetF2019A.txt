@@ -1,0 +1,32 @@
+JUNIOR
+POLO
+TERRASSA
+EGARA
+ATHC
+BARCA
+CASTELLDEFELS
+
+:round
+BARCA         0 - 6 POLO
+EGARA         9 - 1 CASTELLDEFELS
+JUNIOR        3 - 1 TERRASSA
+[BYE]         3 - 1 ATHC
+
+:round
+POLO          0 - 0 JUNIOR
+CASTELLDEFELS 1 - 7 ATHC
+TERRASSA      1 - 1 EGARA
+BARCA         3 - 1 [BYE]
+
+:round
+BARCA         1 - 1 CASTELLDEFELS
+ATHC          1 - 2 TERRASSA
+JUNIOR        5 - 1 EGARA
+[BYE]         3 - 1 POLO
+
+:round
+CASTELLDEFELS 0 - 7 POLO
+TERRASSA      9 - 0 BARCA
+EGARA         3 - 1 ATHC
+JUNIOR        3 - 1 [BYE]
+

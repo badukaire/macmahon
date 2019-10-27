@@ -1,0 +1,15 @@
+round 4 / 9  => w (weighted SOS) = 55% -- PwSOS = P + w * SOS
+bye treatment: IGNORE
+sorting by: WSOS
+team            G  p |  GS -  GR = avg | SOS/SOSOS | PwSOS | wSOS  |
+-------------- ------|-----------------|-----------|-------|-------|
+ILURO           4  9 |  12 -   7 =   5 |   22  110 |  21   | (+12) |
+CATALONIAB      4  7 |  12 -   5 =   7 |   26   81 |  21   | (+14) |
+CASTELLDEFELSB  4  0 |   2 -  13 = -11 |   39   68 |  21   | (+21) |
+VALLESB         4 12 |   9 -   2 =   7 |   15  113 |  20   | (+ 8) |
+EGARA1935       4  3 |   1 -   9 =  -8 |   30   79 |  19   | (+16) |
+ATHCB           4 10 |  19 -   2 =  17 |   14  103 |  17   | (+ 7) |
+EGARAB          4  8 |  10 -   4 =   6 |   17  106 |  17   | (+ 9) |
+TERRASSAB       4  6 |   6 -   8 =  -2 |   20   97 |  17   | (+11) |
+BARCAB          4  3 |   2 -   9 =  -7 |   22   98 |  15   | (+12) |
+JUNIORB         4  0 |   2 -  16 = -14 |   27   73 |  14   | (+14) |
