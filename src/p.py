@@ -17,11 +17,14 @@ def teamProperName( sTeam, pListTeams ) :
 lListTeams = []
 if len( sys.argv ) > 1 :
   lsTeams = sys.argv[ 1 ]
+  liLenLongName = 0
   try :
     lFile = open( lsTeams )
     for line in lFile :
       lsTeam = line.split()[0]
       lListTeams.append( lsTeam )
+      if len( lsTeam ) > liLenLongName :
+         liLenLongName = len( lsTeam )
       #print( lsTeam )
     lFile.close()
   except :
@@ -53,10 +56,12 @@ for line in sys.stdin :
       for s in lssTeam1 : lsTeam1 += s
       lsTeam2 = ""
       for s in lssTeam2 : lsTeam2 += s
-      print( "%s %s - %s %s" % ( lsTeam1, lsScore1, lsScore2, lsTeam2 ) )
-      if len( lListTeams ) > 0 :
+      if len( lListTeams ) == 0 :
+        print( "%s %s - %s %s" % ( lsTeam1, lsScore1, lsScore2, lsTeam2 ) )
+      else :
         lsTeam1proper = teamProperName( lsTeam1, lListTeams )
+        lsPadding = (liLenLongName - len(lsTeam1proper)) * " "
         lsTeam2proper = teamProperName( lsTeam2, lListTeams )
-        print( "%s %s - %s %s" % ( lsTeam1proper, lsScore1, lsScore2, lsTeam2proper ) )
-  print( "--" )
+        print( "%s%s %s - %s %s" % ( lsTeam1proper, lsPadding, lsScore1, lsScore2, lsTeam2proper ) )
+  #print( "--" )
 
