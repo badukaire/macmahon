@@ -95,6 +95,13 @@ class Teams :
 
   def initialize( self ) :
 
+    liTeams = len( self.mSet )
+    if liTeams % 2 == 0 : # 10 => 9
+      liNumRounds = liTeams - 1
+    else : # 9 => 9 + bye => 9
+      liNumRounds = liTeams
+
+    # TODO : why always add the bye team? should be added only if it is declared
     self.add( Macmahon.TEXT_BYE )
 
     self.mDict = dict()
@@ -104,6 +111,8 @@ class Teams :
     self.mSet = None
     self.mListSortedTeams = None
     self.mDictOpponents = dict()
+
+    return liNumRounds
 
 
   def add( self, sTeam ) :
@@ -345,6 +354,7 @@ class Macmahon :
     self.mbOptOutputfileAuto = False
     self.miOptRounds = 0
     self.miOptCountRound = 0
+    self.miTotalRounds = 0
 
     self.miState = Macmahon.STATE_TEAMS # initial: if error, will be STATE_NONE
     self.miRound = 0
@@ -388,7 +398,8 @@ class Macmahon :
         self.miRound += 1
 
     if liState == Macmahon.STATE_TEAMS : # close teams definition
-      self.mTeams.initialize()
+      liNumRounds = self.mTeams.initialize()
+      self.miTotalRounds = self.miOptRounds if self.miOptRounds > 0 else liNumRounds
 
     return liState == self.miState and not self.miState == Macmahon.STATE_ROUND
 
@@ -504,7 +515,7 @@ class Macmahon :
   def processRoundSos( self ) :
 
     #print("====")
-    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liRounds = self.miTotalRounds
     liSosWeight = (liRounds - self.miRound) * 100 / liRounds
     #print( "processRoundSos, round %d / %d => SOS weight = %d%%" % ( self.miRound, liRounds, liSosWeight ) )
     for lsTeam in self.mTeams.mDict.keys() :
@@ -672,10 +683,10 @@ class Macmahon :
 
   def standings( self, iFormat = FORMAT_NONE, bHeader = True ) :
 
-    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liRounds = self.miTotalRounds
     print("round %d / %d  => w (weighted SOS) = %d%% -- PwSOS = P + w * SOS" % (
       self.miRound,
-      self.miOptRounds if self.miOptRounds > 0 else self.miRound,
+      liRounds,
       (liRounds - self.miRound) * 100 / liRounds )
     )
     self.displayBye()
@@ -728,7 +739,7 @@ class Macmahon :
       lsName += "byeDraw_"
     if self.miOptBye == Macmahon.BYE_WIN :
       lsName += "byeWin_"
-    liRounds = self.miOptRounds if self.miOptRounds > 0 else self.miRound
+    liRounds = self.miTotalRounds
     lsName += "r%d_%d" % ( self.miRound, liRounds )
     lsName += ".txt"
     lMacmahon.msOptOutputfile = lsName
