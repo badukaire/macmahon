@@ -1,0 +1,23 @@
+CASTELLDEFELS
+ILURO
+POLOB
+ATHCB 
+BARCELONA
+JUNIORB 
+EGARAB
+
+:round
+#2020-09-26
+
+CASTELLDEFELS      10 - 1     ILURO
+POLOB               0 - 3     ATHCB
+BARCELONA           3 - 4     JUNIORB
+
+:round
+#2020-10-03
+
+EGARAB              2 - 2     CASTELLDEFELS
+ILURO               2 - 2     POLOB
+ATHCB               6 - 0     BARCELONA
+
+

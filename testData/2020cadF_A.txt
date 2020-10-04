@@ -1,0 +1,19 @@
+EGARA
+TERRASSA
+POLO
+JUNIOR
+ATHC
+
+:round
+#2020-09-26
+
+EGARA          6 - 0     TERRASSA
+POLO           1 - 4     JUNIOR
+
+
+:round
+#2020-10-03
+
+JUNIOR         0 - 2     EGARA 
+ATHC           0 - 1     POLO 
+
